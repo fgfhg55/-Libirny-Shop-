@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Libirny Shop</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root {
+    --bg:#0d0b1a; --card:#181331; --card2:#221a45;
+    --purple:#8b5cf6; --purple2:#a855f7; --pink:#e879f9;
+    --text:#f1edff; --muted:#9a90c0;
+  }
+  body { background:var(--bg); color:var(--text); font-family:Arial,sans-serif; min-height:100vh; }
+
+  /* ===== ЗАСТАВКА ===== */
+  #welcome {
+    position:fixed; inset:0; z-index:100;
+    background: radial-gradient(circle at 30% 20%, rgba(139,92,246,.25), transparent 45%),
+                radial-gradient(circle at 75% 70%, rgba(232,121,249,.18), transparent 45%),
+                var(--bg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:30px;
+    transition:opacity .5s;
+  }
+  #welcome img { max-width:340px; width:70%; border-radius:18px; box-shadow:0 0 60px rgba(139,92,246,.45); }
+  #welcome .cloud-fallback {
+    width:280px; height:150px; border-radius:50%;
+    background:linear-gradient(135deg,#ffb347,#ff5e2d);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:900; font-size:30px; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,.5);
+    box-shadow:0 0 60px rgba(255,140,50,.4);
+  }
+  .btn-main {
+    background:linear-gradient(90deg,var(--purple),var(--pink));
+    color:#fff; border:none; border-radius:999px;
+    padding:18px 60px; font-size:20px; font-weight:800; cursor:pointer;
+    box-shadow:0 0 40px rgba(139,92,246,.5);
+    transition:transform .2s, box-shadow .2s;
+  }
+  .btn-main:hover { transform:scale(1.06); box-shadow:0 0 60px rgba(168,85,247,.7); }
+
+  /* ===== ШАПКА ===== */
+  header {
+    position:sticky; top:0; z-index:10;
+    background:rgba(13,11,26,.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid #2a2150;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:12px 5%;
+  }
+  .logo-text { font-weight:900; font-size:19px; color:var(--purple2); cursor:pointer; }
+  .top-btns { display:flex; gap:10px; }
+  .pill {
+    background:var(--card2); color:var(--text);
+    border:1px solid #3b2f6e; border-radius:999px;
+    padding:9px 16px; font-size:14px; cursor:pointer; font-weight:700;
+    transition:background .2s;
+  }
+  .pill:hover { background:var(--purple); color:#fff; }
+  .pill.cart { background:linear-gradient(90deg,var(--purple),var(--pink)); border:none; color:#fff; }
+
+  .page { max-width:1000px; margin:0 auto; padding:30px 20px; display:none; }
+  .page.active { display:block; }
+  h2.section-title { font-size:26px; margin-bottom:20px; color:var(--purple2); }
+
+  /* ===== КАРТОЧКИ ===== */
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:18px; }
+  .card {
+    background:var(--card); border:1px solid #2a2150; border-radius:18px;
+    padding:20px; cursor:pointer; transition:transform .2s, border-color .2s, box-shadow .2s;
+  }
+  .card:hover { transform:translateY(-5px); border-color:var(--purple); box-shadow:0 15px 35px rgba(139,92,246,.25); }
+  .card h3 { font-size:17px; margin-bottom:6px; }
+  .card .desc { color:var(--muted); font-size:13px; }
+  .card .row { display:flex; align-items:center; justify-content:space-between; margin-top:14px; }
+  .card .price { color:var(--pink); font-weight:900; font-size:18px; }
+  .add {
+    background:var(--card2); color:var(--text); border:1px solid var(--purple);
+    border-radius:10px; padding:8px 14px; cursor:pointer; font-weight:700; font-size:13px;
+  }
+  .add:hover { background:var(--purple); }
+
+  .back { margin-bottom:18px; }
+
+  /* ===== МОДАЛКИ ===== */
+  .overlay {
+    position:fixed; inset:0; background:rgba(5,3,15,.75);
+    display:none; align-items:center; justify-content:center; z-index:50;
+  }
+  .overlay.open { display:flex; }
+  .modal {
+    background:var(--card); border:1px solid #3b2f6e; border-radius:20px;
+    width:92%; max-width:440px; padding:26px;
+    max-height:85vh; overflow-y:auto;
+  }
+  .modal h3 { color:var(--purple2); margin-bottom:16px; font-size:20px; }
+  .modal input {
+    width:100%; background:var(--bg); border:1px solid #3b2f6e; color:var(--text);
+    border-radius:10px; padding:11px 14px; margin-bottom:12px; font-size:15px;
+  }
+  .modal .line { display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px dashed #3b2f6e; font-size:14px; }
+  .modal .total { margin-top:14px; font-size:17px; font-weight:800; }
+  .modal .total b { color:var(--pink); }
+  .btn-full {
+    width:100%; margin-top:16px; border:none; border-radius:12px;
+    padding:13px; font-weight:800; font-size:15px; cursor:pointer;
+  }
+  .btn-grad { background:linear-gradient(90deg,var(--purple),var(--pink)); color:#fff; }
+  .btn-ghost { background:none; border:1px solid #3b2f6e; color:var(--muted); }
+  .btn-del { background:#4a1030; color:#ff6b9d; border:none; border-radius:8px; padding:6px 10px; cursor:pointer; font-size:12px; }
+  .btn-small { background:var(--card2); color:var(--purple2); border:1px dashed var(--purple); border-radius:10px; padding:10px; width:100%; cursor:pointer; font-weight:700; margin-top:10px; }
+  .admin-row { display:flex; justify-content:space-between; align-items:center; gap:10px; background:var(--card2); border-radius:12px; padding:12px; margin-bottom:8px; font-size:14px; }
+  .admin-actions { display:flex; gap:6px; }
+  .msg-ok { color:#7ef0b0; text-align:center; margin-top:12px; font-weight:700; display:none; }
+</style>
+</head>
+<body>
+
+<!-- ===== ЗАСТАВКА ===== -->
+<div id="welcome">
+  <img src="logo.jpg" alt="Libirny Shop" onerror="this.style.display='none';document.getElementById('fb').style.display='flex'">
+  <div id="fb" class="cloud-fallback" style="display:none">Libirny Shop ☁️</div>
+  <button class="btn-main" onclick="enter()">Добро пожаловать</button>
+</div>
+
+<!-- ===== ШАПКА ===== -->
+<header>
+  <div class="logo-text" onclick="go('catalog')">☁️ LIBIRNY SHOP</div>
+  <div class="top-btns">
+    <button class="pill cart" onclick="openCart()">🛒 Корзина · <span id="count">0</span></button>
+    <button class="pill" onclick="openAdminLogin()">🔐 Админ</button>
+  </div>
+</header>
+
+<!-- ===== ГЛАВНОЕ МЕНЮ (разделы) ===== -->
+<div class="page" id="page-catalog">
+  <h2 class="section-title">📂 Меню</h2>
+  <div class="grid" id="cats"></div>
+</div>
+
+<!-- ===== МАРКИ ВНУТРИ РАЗДЕЛА ===== -->
+<div class="page" id="page-cat">
+  <button class="pill back" onclick="go('catalog')">← Назад</button>
+  <h2 class="section-title" id="cat-title"></h2>
+  <div class="grid" id="brands"></div>
+</div>
+
+<!-- ===== ВКУСЫ ВНУТРИ МАРКИ ===== -->
+<div class="page" id="page-brand">
+  <button class="pill back" onclick="go('cat')">← Назад</button>
+  <h2 class="section-title" id="brand-title"></h2>
+  <div class="grid" id="items"></div>
+</div>
+
+<!-- ===== КОРЗИНА ===== -->
+<div class="overlay" id="cart-overlay" onclick="if(event.target===this)closeModal('cart-overlay')">
+  <div class="modal">
+    <h3>🛒 Корзина</h3>
+    <div id="cart-list"></div>
+    <div class="total">Итого: <b id="total">0 ₽</b></div>
+    <input id="buyer-name" placeholder="Твоё имя">
+    <input id="buyer-contact" placeholder="Телефон или @юзернейм">
+    <button class="btn-full btn-grad" onclick="makeOrder()">✅ Оформить заказ</button>
+    <div class="msg-ok" id="order-ok">🎉 Заказ отправлен! Продавец его уже видит.</div>
+    <button class="btn-full btn-ghost" onclick="closeModal('cart-overlay')">Закрыть</button>
+  </div>
+</div>
+
+<!-- ===== ВХОД В АДМИНКУ ===== -->
+<div class="overlay" id="admin-login" onclick="if(event.target===this)closeModal('admin-login')">
+  <div class="modal">
+    <h3>🔐 Вход в админ-панель</h3>
+    <input id="adm-login" placeholder="Логин">
+    <input id="adm-pass" type="password" placeholder="Пароль">
+    <button class="btn-full btn-grad" onclick="adminLogin()">Войти</button>
+    <button class="btn-full btn-ghost" onclick="closeModal('admin-login')">Отмена</button>
+  </div>
+</div>
+
+<!-- ===== АДМИН-ПАНЕЛЬ ===== -->
+<div class="overlay" id="admin-panel" onclick="if(event.target===this)closeModal('admin-panel')">
+  <div class="modal" style="max-width:560px">
+    <h3>⚙️ Админ-панель</h3>
+
+    <h3 style="font-size:15px;color:var(--muted)">📦 Товары</h3>
+    <div id="adm-cats"></div>
+    <button class="btn-small" onclick="admAddCat()">➕ Добавить раздел</button>
+
+    <h3 style="font-size:15px;color:var(--muted);margin-top:20px">📋 Заказы покупателей</h3>
+    <div id="adm-orders"></div>
+
+    <button class="btn-full btn-ghost" onclick="closeModal('admin-panel')">Закрыть</button>
+  </div>
+</div>
+
+<script>
+// ============ ПАРОЛИ И ДАННЫЕ (всё можно менять) ============
+const ADMIN_LOGIN = "серый2.0гг";
+const ADMIN_PASS  = "122665098";
+
+// Стартовый каталог. Потом меняется через админку.
+let DB = JSON.parse(localStorage.getItem("libirny")) || {
+  cats: [
+    { name:"💧 Жижа", brands:[
+      { name:"Bad Drip", items:[
+        { n:"Арбуз-лёд 30 мл", price:500, d:"Сладкий арбуз с ледяной прохладой" },
+        { n:"Манго-маракуйя 30 мл", price:550, d:"Тропический взрыв во флаконе" }
+      ]},
+      { name:"Hussar", items:[
+        { n:"Виноград-мята 30 мл", price:550, d:"Свежий виноград с мятой" }
+      ]}
+    ]},
+    { name:"🚬 Одноразки", brands:[
+      { name:"Puffs", items:[
+        { n:"Puffs X 2500 тяг", price:900, d:"Клубника-банан, 2500 тяг" }
+      ]}
+    ]}
+  ],
+  orders: []
+};
+function save(){ localStorage.setItem("libirny", JSON.stringify(DB)); }
+
+let cart = [];               // корзина
+let curCat = 0, curBrand = 0;// открытый раздел/марка
+let isAdmin = false;
+
+// ============ НАВИГАЦИЯ ============
+function enter(){ document.getElementById("welcome").style.opacity=0; setTimeout(()=>document.getElementById("welcome").style.display="none",500); go("catalog"); }
+function go(page){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById("page-"+page).classList.add("active");
+  if(page==="catalog") renderCats();
+  if(page==="cat") renderBrands();
+  if(page==="brand") renderItems();
+}
+
+// ============ КАТАЛОГ ============
+function renderCats(){
+  document.getElementById("cats").innerHTML = DB.cats.map((c,i)=>
+    `<div class="card" onclick="curCat=${i};go('cat')"><h3>${c.name}</h3><div class="desc">${c.brands.length} марок</div></div>`
+  ).join("");
+}
+function renderBrands(){
+  document.getElementById("cat-title").textContent = DB.cats[curCat].name;
+  document.getElementById("brands").innerHTML = DB.cats[curCat].brands.map((b,i)=>
+    `<div class="card" onclick="curBrand=${i};go('brand')"><h3>${b.name}</h3><div class="desc">${b.items.length} вкусов</div></div>`
+  ).join("");
+}
+function renderItems(){
+  const b = DB.cats[curCat].brands[curBrand];
+  document.getElementById("brand-title").textContent = b.name;
+  document.getElementById("items").innerHTML = b.items.map((it,i)=>
+    `<div class="card"><h3>${it.n}</h3><div class="desc">${it.d||""}</div>
+     <div class="row"><div class="price">${it.price} ₽</div>
+     <button class="add" onclick="addToCart(event,${i})">➕ В корзину</button></div></div>`
+  ).join("");
+}
+
+// ============ КОРЗИНА ============
+function addToCart(e,i){
+  e.stopPropagation();
+  const it = DB.cats[curCat].brands[curBrand].items[i];
+  const same = cart.find(c=>c.n===it.n);
+  if(same) same.qty++; else cart.push({...it, qty:1});
+  document.getElementById("count").textContent = cart.reduce((s,c)=>s+c.qty,0);
+  e.target.textContent="✓ Добавлено";
+  setTimeout(()=>e.target.textContent="➕ В корзину",800);
+}
+function openCart(){
+  const list = document.getElementById("cart-list");
+  if(!cart.length) list.innerHTML = `<div class="line">Корзина пуста 😔</div>`;
+  else list.innerHTML = cart.map((c,i)=>
+    `<div class="line"><span>${c.n} × ${c.qty}</span>
+     <span><button class="btn-del" onclick="delFromCart(${i})">➖</button> ${c.price*c.qty} ₽</span></div>`
+  ).join("");
+  document.getElementById("total").textContent = cart.reduce((s,c)=>s+c.price*c.qty,0)+" ₽";
+  openModal("cart-overlay");
+}
+function delFromCart(i){ cart.splice(i,1); document.getElementById("count").textContent = cart.reduce((s,c)=>s+c.qty,0); openCart(); }
+function makeOrder(){
+  const name = document.getElementById("buyer-name").value.trim();
+  const contact = document.getElementById("buyer-contact").value.trim();
+  if(!name || !contact){ alert("Заполни имя и контакт!"); return; }
+  if(!cart.length){ alert("Корзина пуста!"); return; }
+  const text = "НОВЫЙ ЗАКАЗ\nОт: "+name+"\nКонтакт: "+contact+"\n\n"+
+    cart.map(c=>"• "+c.n+" × "+c.qty+" = "+c.price*c.qty+" ₽").join("\n")+
+    "\n\nИтого: "+cart.reduce((s,c)=>s+c.price*c.qty,0)+" ₽";
+  DB.orders.push({ date:new Date().toLocaleString(), text });
+  save();
+  cart=[]; document.getElementById("count").textContent=0;
+  document.getElementById("buyer-name").value=""; document.getElementById("buyer-contact").value="";
+  document.getElementById("order-ok").style.display="block";
+  setTimeout(()=>{ document.getElementById("order-ok").style.display="none"; closeModal("cart-overlay"); },2500);
+}
+
+// ============ АДМИНКА ============
+function openAdminLogin(){ openModal("admin-login"); }
+function adminLogin(){
+  if(document.getElementById("adm-login").value===ADMIN_LOGIN &&
+     document.getElementById("adm-pass").value===ADMIN_PASS){
+    isAdmin=true; closeModal("admin-login"); renderAdmin(); openModal("admin-panel");
+  } else alert("Неверный логин или пароль!");
+}
+function renderAdmin(){
+  document.getElementById("adm-cats").innerHTML = DB.cats.map((c,ci)=>
+    `<div class="admin-row">
+       <b>${c.name}</b>
+       <div class="admin-actions">
+         <button class="btn-del" onclick="admRenameCat(${ci})">✏️</button>
+         <button class="btn-del" onclick="admAddBrand(${ci})">➕марка</button>
+         <button class="btn-del" onclick="admDelCat(${ci})">🗑</button>
+       </div>
+     </div>`+
+    c.brands.map((b,bi)=>
+      `<div class="admin-row" style="margin-left:18px">
+         <span>${b.name} <span style="color:var(--muted)">(${b.items.length} вкусов)</span></span>
+         <div class="admin-actions">
+           <button class="btn-del" onclick="admAddItem(${ci},${bi})">➕вкус</button>
+           <button class="btn-del" onclick="admDelBrand(${ci},${bi})">🗑</button>
+         </div>
+       </div>`+
+      b.items.map((it,ii)=>
+        `<div class="admin-row" style="margin-left:36px">
+           <span>${it.n} — ${it.price} ₽</span>
+           <div class="admin-actions">
+             <button class="btn-del" onclick="admEditItem(${ci},${bi},${ii})">✏️</button>
+             <button class="btn-del" onclick="admDelItem(${ci},${bi},${ii})">🗑</button>
+           </div>
+         </div>`).join("")
+    ).join("")
+  ).join("");
+
+  document.getElementById("adm-orders").innerHTML = DB.orders.length
+    ? DB.orders.map(o=>`<div class="admin-row"><span>${o.date}</span><button class="btn-del" onclick="copyOrder(this)" data-t="${o.text.replace(/"/g,'&quot;')}">📋 копировать</button></div>`).join("")
+    : `<div class="admin-row">Заказов пока нет</div>`;
+}
+function admAddCat(){ const n=prompt("Название раздела:"); if(n){ DB.cats.push({name:n,brands:[]}); save(); renderAdmin(); } }
+function admRenameCat(i){ const n=prompt("Новое название:",DB.cats[i].name); if(n){ DB.cats[i].name=n; save(); renderAdmin(); } }
+function admDelCat(i){ if(confirm("Удалить раздел целиком?")){ DB.cats.splice(i,1); save(); renderAdmin(); } }
+function admAddBrand(ci){ const n=prompt("Название марки:"); if(n){ DB.cats[ci].brands.push({name:n,items:[]}); save(); renderAdmin(); } }
+function admDelBrand(ci,bi){ if(confirm("Удалить марку?")){ DB.cats[ci].brands.splice(bi,1); save(); renderAdmin(); } }
+function admAddItem(ci,bi){
+  const n=prompt("Название вкуса:"); if(!n) return;
+  const p=parseInt(prompt("Цена в рублях:")); if(isNaN(p)) return;
+  const d=prompt("Описание (можно пропустить):")||"";
+  DB.cats[ci].brands[bi].items.push({n,price:p,d}); save(); renderAdmin();
+}
+function admEditItem(ci,bi,ii){
+  const it=DB.cats[ci].brands[bi].items[ii];
+  const n=prompt("Название:",it.n); if(n===null) return;
+  const p=parseInt(prompt("Цена:",it.price)); if(isNaN(p)) return;
+  const d=prompt("Описание:",it.d)||"";
+  DB.cats[ci].brands[bi].items[ii]={n,price:p,d}; save(); renderAdmin();
+}
+function admDelItem(ci,bi,ii){ if(confirm("Удалить вкус?")){ DB.cats[ci].brands[bi].items.splice(ii,1); save(); renderAdmin(); } }
+function copyOrder(btn){ navigator.clipboard.writeText(btn.dataset.t).then(()=>alert("Заказ скопирован! Теперь отправь его себе в бот.")); }
+
+// ============ УТИЛИТЫ ============
+function openModal(id){ document.getElementById(id).classList.add("open"); }
+function closeModal(id){ document.getElementById(id).classList.remove("open"); }
+</script>
+</body>
+</html>
+
