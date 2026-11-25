@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Libirny Shop</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  body { font-family: Arial, sans-serif; background: #121212; color: #fff; margin: 0; padding: 15px; }
+  h1 { font-size: 22px; }
+  .item { background: #1e1e1e; border-radius: 10px; padding: 12px; margin-bottom: 10px;
+          display: flex; justify-content: space-between; align-items: center; }
+  button { background: #2e7d32; color: #fff; border: none; border-radius: 8px;
+           padding: 10px 16px; font-size: 15px; cursor: pointer; }
+  .cart { background: #1e1e1e; border-radius: 10px; padding: 12px; margin-top: 15px; }
+  input { width: 100%; padding: 10px; border-radius: 8px; border: none; margin: 8px 0;
+          box-sizing: border-box; font-size: 15px; }
+  .order-btn { width: 100%; font-size: 17px; margin-top: 5px; }
+  .qty { font-size: 15px; margin: 0 8px; }
+</style>
+</head>
+<body>
+<h1>🛒 Libirny Shop</h1>
+<div id="list"></div>
+<div class="cart">
+  <h3>Ваша корзина</h3>
+  <div id="cartList">Пусто</div>
+  <h4 id="total">Итого: 0 ₽</h4>
+  <input type="text" id="phone" placeholder="Ваш телефон">
+  <button class="order-btn" onclick="sendOrder()">Оформить заказ</button>
+</div>
+
+<script>
+const ITEMS = [
+  {code: "liq1", name: "Арбуз-лёд 30 мл",      price: 500},
+  {code: "liq2", name: "Манго-маракуйя 30 мл", price: 550},
+  {code: "liq3", name: "Виноград-мята 30 мл",  price: 550},
+  {code: "liq4", name: "Клубника-банан 30 мл", price: 500}
+];
+let cart = {};
+
+function render() {
+  document.getElementById("list").innerHTML = ITEMS.map(i =>
+    `<div class="item"><span>${i.name} — ${i.price} ₽</span>
+     <span><button onclick="dec('${i.code}')">−</button>
+     <span class="qty">${cart[i.code] || 0}</span>
+     <button onclick="inc('${i.code}')">+</button></span></div>`
+  ).join("");
+
+  const entries = Object.entries(cart).filter(([c, q]) => q > 0);
+  if (!entries.length) {
+    document.getElementById("cartList").textContent = "Пусто";
+    document.getElementById("total").textContent = "Итого: 0 ₽";
+    return;
+  }
+  let total = 0, text = "";
+  for (const [code, qty] of entries) {
+    const i = ITEMS.find(x => x.code === code);
+    total += i.price * qty;
+    text += `${i.name} × ${qty}<br>`;
+  }
+  document.getElementById("cartList").innerHTML = text;
+  document.getElementById("total").textContent = "Итого: " + total + " ₽";
+}
+
+function inc(code) { cart[code] = (cart[code] || 0) + 1; render(); }
+function dec(code) { if (cart[code]) cart[code]--; render(); }
+
+function sendOrder() {
+  const entries = Object.entries(cart).filter(([c, q]) => q > 0);
+  if (!entries.length) { alert("Корзина пуста!"); return; }
+  const phone = document.getElementById("phone").value.trim();
+  if (!phone) { alert("Введите телефон!"); return; }
+
+  let total = 0;
+  const items = entries.map(([code, qty]) => {
+    const i = ITEMS.find(x => x.code === code);
+    total += i.price * qty;
+    return {name: i.name, qty: qty, price: i.price};
+  });
+
+  Telegram.WebApp.sendData(JSON.stringify({
+    items: items,
+    total: total,
+    phone: phone
+  }));
+}
+
+render();
+</script>
+</body>
+</html>
+{\rtf1}
