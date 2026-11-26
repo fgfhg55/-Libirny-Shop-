@@ -7,12 +7,9 @@
 <title>Libirny Shop</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root,[data-theme="violet"]{--bg:#070312;--glass:rgba(255,255,255,.06);--acc:#a855f7;--acc2:#d946ef;--acc3:#22d3ee;
---on:#12041f;--soft:rgba(168,85,247,.16);--danger:#ff3b5c;--text:#f6f2fb;--muted:#a99bbd;--line:rgba(255,255,255,.1);--glow:rgba(168,85,247,.45)}
-[data-theme="neon"]{--bg:#04040a;--glass:rgba(255,255,255,.05);--acc:#00e676;--acc2:#00c2ff;--acc3:#b44bff;
---on:#04150a;--soft:rgba(0,230,118,.14);--text:#f4f5fa;--muted:#969eb2;--line:rgba(255,255,255,.09);--glow:rgba(0,230,118,.4)}
-[data-theme="mono"]{--bg:#070709;--glass:rgba(255,255,255,.05);--acc:#f2f2f7;--acc2:#c7cdd6;--acc3:#9aa0ab;
---on:#0a0a10;--soft:rgba(255,255,255,.13);--text:#f2f2f7;--muted:#9aa0ab;--line:rgba(255,255,255,.1);--glow:rgba(255,255,255,.25)}
+:root,[data-theme="violet"]{--bg:#070312;--glass:rgba(255,255,255,.06);--acc:#a855f7;--acc2:#d946ef;--acc3:#22d3ee;--on:#12041f;--soft:rgba(168,85,247,.16);--danger:#ff3b5c;--text:#f6f2fb;--muted:#a99bbd;--line:rgba(255,255,255,.1);--glow:rgba(168,85,247,.45)}
+[data-theme="neon"]{--bg:#04040a;--glass:rgba(255,255,255,.05);--acc:#00e676;--acc2:#00c2ff;--acc3:#b44bff;--on:#04150a;--soft:rgba(0,230,118,.14);--text:#f4f5fa;--muted:#969eb2;--line:rgba(255,255,255,.09);--glow:rgba(0,230,118,.4)}
+[data-theme="mono"]{--bg:#070709;--glass:rgba(255,255,255,.05);--acc:#f2f2f7;--acc2:#c7cdd6;--acc3:#9aa0ab;--on:#0a0a10;--soft:rgba(255,255,255,.13);--text:#f2f2f7;--muted:#9aa0ab;--line:rgba(255,255,255,.1);--glow:rgba(255,255,255,.25)}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 #splash{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .4s}
@@ -46,7 +43,7 @@ header{position:sticky;top:0;z-index:30;padding:calc(12px + env(safe-area-inset-
 .stat{flex:1;text-align:center}
 .stat b{font-size:15px;color:var(--acc);display:block}
 .stat span{font-size:9.5px;color:var(--muted);font-weight:600}
-.hit{margin:14px 14px 0;border-radius:24px;overflow:hidden;height:220px;display:block;border:1px solid var(--line);cursor:pointer;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+.hit{margin:14px 14px 0;border-radius:24px;overflow:hidden;height:220px;border:1px solid var(--line);cursor:pointer;box-shadow:0 10px 40px rgba(0,0,0,.5)}
 .hit img{width:100%;height:100%;object-fit:cover;display:block}
 .hit-no{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:52px;background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 32%,transparent),color-mix(in srgb,var(--acc3) 26%,transparent))}
 .streets{display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:9px;padding:4px 14px 0}
@@ -237,7 +234,7 @@ nav .npill{position:absolute;top:4px;right:calc(50% - 21px);background:var(--dan
     <div class="kick">Libirny Shop · 2026</div>
     <h2 id="hero-title">Новые позиции<br><span>уже здесь</span></h2>
     <p>Выбирай точку и вкус. Крути рулетку — за каждую жижу 2 прокрутки 🎰</p>
-    <div class="htags"><div class="htag">🎯 Вкусы по точкам</div><div class="htag">🎰 21 приз</div><div class="htag">⚡ Доставка</div></div>
+    <div class="htags"><div class="htag">🎯 Вкусы по точкам</div><div class="htag">🎰 21 приз</div><div class="htag">🎟 Промокоды</div></div>
     <div class="stats">
       <div class="stat"><b id="st-cnt">0</b><span>товаров</span></div>
       <div class="stat"><b id="st-cats">0</b><span>категорий</span></div>
@@ -255,7 +252,7 @@ nav .npill{position:absolute;top:4px;right:calc(50% - 21px);background:var(--dan
     <button class="clr" id="qclr" onclick="document.getElementById('q').value='';onSearch()">✕</button>
   </div>
   <div class="chips" id="chips"></div>
-  <div class="srow" id="sort-row">
+  <div class="srow">
     <div class="sort on" data-s="new" onclick="setSort('new')">🆕 Новые</div>
     <div class="sort" data-s="asc" onclick="setSort('asc')">↑ Дешевле</div>
     <div class="sort" data-s="desc" onclick="setSort('desc')">↓ Дороже</div>
@@ -276,7 +273,7 @@ nav .npill{position:absolute;top:4px;right:calc(50% - 21px);background:var(--dan
     </div>
     <div class="rl-count">Прокруток:<b id="rl-count">0</b></div>
     <div class="rl-res" id="rl-res"><div class="t" id="rr-t"></div><div class="d" id="rr-d"></div><div class="rl-promo" id="rr-promo"></div></div>
-    <button class="cta" id="rl-btn" style="margin-top:13px" onclick="doSpin()">Крутить!</button>
+    <button class="cta" style="margin-top:13px" onclick="doSpin()">Крутить!</button>
     <div class="rv-t" style="padding-top:18px">Возможные призы</div>
     <div class="leg" id="rl-legend"></div>
   </div>
@@ -382,7 +379,7 @@ function fmt(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' '); }
 function userId(){ return (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id : null; }
 
 let ITEMS=[], STREETS=[], curStreet=null, curCat='Все', curSort='new';
-let cart=load('cart',{}), favs=load('favs',[]), recent=load('recent',[]), orders=load('orders',[]), ratings=load('ratings',{});
+let cart=load('cart',{}), favs=load('favs',[]), recent=load('recent',[]), orders=load('orders',[]);
 let shItem=null, shCount=1, shFlavor=null, shStreet=null;
 const FREE_SHIP=3000;
 
@@ -410,7 +407,7 @@ const FALLBACK_PRIZES={spins_per_juice:2,prizes:[
  {id:'free_juice',title:'🎰 БЕСПЛАТНАЯ ЖИЖА',weight:0.0001,color:'#ffd166'}
 ]};
 
-let PRIZES=FALLBACK_PRIZES, PROMO_CODES={}, SPINS=0, wheelRot=0, spinning=false;
+let PRIZES=FALLBACK_PRIZES, SPINS=0, wheelRot=0, spinning=false;
 let spinsUsed=load('spins_used',[]), coupon=load('coupon',null), myPromo=null;
 
 let orderType='delivery', deliveryCost=null, deliveryKm=null, deliveryShop=null, pickupShop=null;
@@ -495,28 +492,28 @@ async function loadRoulette(){
     const r=await fetch('prizes.json?t='+Date.now()); const j=await r.json();
     if(j&&Array.isArray(j.prizes)&&j.prizes.length) PRIZES=j;
   }catch(e){}
-  try{
-    const rp=await fetch('promocodes.json?t='+Date.now());
-    PROMO_CODES=await rp.json();
-    if(typeof PROMO_CODES!=='object'||!PROMO_CODES) PROMO_CODES={};
-  }catch(e){ PROMO_CODES={}; }
   const uid=userId();
   let server=0;
   try{
     const rs=await fetch('spins.json?t='+Date.now()); const sj=await rs.json();
     server=uid?(sj[String(uid)]||0):0;
   }catch(e){}
-  SPINS=Math.max(0,server-spinsUsed.length);
+  /* находим активный промокод юзера в promocodes.json */
   myPromo=null;
-  if(uid){
-    const mine=Object.keys(PROMO_CODES).filter(c=>{
-      const d=PROMO_CODES[c];
-      return d&&d.user_id===uid&&!d.used;
-    });
-    if(mine.length) myPromo={code:mine[0],percent:PROMO_CODES[mine[0]].percent,id:PROMO_CODES[mine[0]].id};
-  }
+  try{
+    const rp=await fetch('promocodes.json?t='+Date.now()); const pc=await rp.json();
+    if(pc&&typeof pc==='object'&&uid){
+      const mine=Object.keys(pc).filter(c=>pc[c]&&pc[c].user_id===uid&&!pc[c].used);
+      if(mine.length){
+        const d=pc[mine[0]];
+        myPromo={code:mine[0],percent:d.percent||10,id:d.id||'discount10'};
+        toast('🎟 Твой промокод: '+mine[0]+' — скидка '+d.percent+'%');
+      }
+    }
+  }catch(e){}
+  SPINS=Math.max(0,server-spinsUsed.length);
   const pending=load('pending_spins',0);
-  if(pending>0){ save('pending_spins',0); setTimeout(()=>toast('🎰 За последний заказ начислено '+pending+' прокруток!'),800); }
+  if(pending>0){ save('pending_spins',0); SPINS+=pending; renderSpinsUI(); setTimeout(()=>toast('🎰 За заказ начислено '+pending+' прокруток!'),800); }
 }
 
 function buildWheel(){
@@ -542,8 +539,8 @@ function prizeDesc(p){
   if(!p) return '';
   if(p.id==='free_delivery') return 'Доставка бесплатная — применится в корзине автоматически.';
   if(p.id==='discount3'||p.id==='discount5'||p.id==='discount10'||p.id==='discount15'||p.id==='pod_disc20')
-    return 'Одноразовый промокод уже выслан ботом — найди его там и введи в корзине.';
-  if(p.id.startsWith('spin')) return 'Начислено +'+p.id.replace('spin','')+' прокруток — крути дальше!';
+    return 'Одноразовый промокод выслан ботом — введи его в корзине (поле «Промокод»).';
+  if(p.id.indexOf('spin')===0) return 'Начислено +'+p.id.replace('spin','')+' прокруток — крути дальше!';
   if(p.id==='gift_pod') return 'Возьми любой подик — жижа в подарок! Вкус уточни у менеджера.';
   if(p.id==='juice_second50') return 'Скажи менеджеру — вторая жижа со скидкой 50%.';
   if(p.id==='juice_third3') return 'При заказе от 3 жиж — третья бесплатно.';
@@ -573,11 +570,16 @@ function doSpin(){
     SPINS--;
     spinsUsed.push({id:pick.id,title:pick.title});
     save('spins_used',spinsUsed);
-    if(pick.id.startsWith('spin')) SPINS+=parseInt(pick.id.replace('spin',''),10)||0;
+    if(pick.id.indexOf('spin')===0) SPINS+=parseInt(pick.id.replace('spin',''),10)||0;
     renderSpinsUI();
     if(pick.id==='free_delivery'){ coupon={id:'free_delivery',title:pick.title}; save('coupon',coupon); }
     document.getElementById('rr-t').textContent=pick.title;
     document.getElementById('rr-d').textContent=prizeDesc(pick);
+    if(pick.id==='discount3'||pick.id==='discount5'||pick.id==='discount10'||pick.id==='discount15'||pick.id==='pod_disc20'){
+      const el=document.getElementById('rr-promo');
+      el.textContent='🎟 Промокод выслан ботом — открой чат с ботом!';
+      el.classList.add('show');
+    }
     document.getElementById('rl-res').classList.add('show');
     haptic('ok');
     if(pick.id==='free_juice') confetti();
@@ -704,7 +706,7 @@ function renderFlavorChips(){
   if(!shItem||!hasFlavors(shItem)){ box.innerHTML=''; return; }
   box.innerHTML='<div class="rv-t" style="padding:12px 0 4px">🎯 Вкусы</div><div class="flav-row">'+
     shItem.flavors.map(f=>{
-      const total=fStockSum(shItem,f);
+      const total=fStockSum(f);
       const per=pStreets(shItem).map(s=>{const q=fStockAt(shItem,f,s);return q>0?s+' ×'+q:null;}).filter(Boolean).join(', ');
       const off=total<=0||(shStreet&&fStockAt(shItem,f,shStreet)<=0);
       return '<div class="flav-chip '+(shFlavor===f.name?'on':'')+' '+(off?'off':'')+'" onclick="pickFlavor(\''+f.name.replace(/'/g,"\\'")+'\')">'+
@@ -766,7 +768,6 @@ function addToCart(code){
   cart[key]={q:(cart[key]?cart[key].q:0)+1,f:null,st};
   save('cart',cart);
   renderList(); renderBadge();
-  deliveryCost=null; deliveryKm=null; deliveryShop=null;
   if(document.getElementById('v-cart').classList.contains('on')) renderCart();
   toast('Добавлено в корзину ✓'); haptic('ok');
 }
@@ -785,16 +786,13 @@ function cartEntries(){
   });
 }
 function codeQty(code){ return cartEntries().filter(e=>e.code===code).reduce((a,e)=>a+e.q,0); }
-function cartTotal(){
-  return cartEntries().reduce((a,e)=>{
-    const i=ITEMS.find(x=>x.code===e.code);
-    if(!i) return a;
-    let price=i.price;
-    if(myPromo&&myPromo.id==='pod_disc20'&&isPod(i)) price=Math.round(i.price*(1-myPromo.percent/100));
-    else if(myPromo&&myPromo.id.startsWith('discount')&&isJuice(i)) price=Math.round(i.price*(1-myPromo.percent/100));
-    return a+price*e.q;
-  },0);
+function itemPrice(i){
+  let price=i.price;
+  if(myPromo&&myPromo.id==='pod_disc20'&&isPod(i)) price=Math.round(i.price*(1-myPromo.percent/100));
+  else if(myPromo&&myPromo.id.indexOf('discount')===0&&isJuice(i)) price=Math.round(i.price*(1-myPromo.percent/100));
+  return price;
 }
+function cartTotal(){ return cartEntries().reduce((a,e)=>{ const i=ITEMS.find(x=>x.code===e.code); return a+(i?itemPrice(i)*e.q:0); },0); }
 function renderBadge(){
   const n=cartEntries().reduce((a,e)=>a+e.q,0);
   const b=document.getElementById('badge'),nb=document.getElementById('nav-badge');
@@ -835,7 +833,7 @@ function streetsInCart(){
   });
   return [...set];
 }
-function shopForStreet(st){ return SHOPS.find(s=>s.name.toLowerCase().startsWith(String(st).toLowerCase()))||null; }
+function shopForStreet(st){ return SHOPS.find(s=>s.name.toLowerCase().indexOf(String(st).toLowerCase())===0)||null; }
 function calcDelivery(shop,km){
   if(!shop) return null;
   if(shop.min===0&&shop.max===0) return 0;
@@ -886,7 +884,7 @@ async function recalcDelivery(){
   updTotals();
 }
 function updTotals(){
-  const dev=deliveryPrice(), goods=cartTotal(), grand=goods+dev;
+  const dev=deliveryPrice(), grand=cartTotal()+dev;
   const dl=document.getElementById('r-del');
   if(dl) dl.textContent=dev?fmt(dev)+' ₽':'бесплатно';
   const tt=document.getElementById('r-total');
@@ -915,24 +913,18 @@ function renderCart(){
   const rows=entries.map(e=>{
     const i=ITEMS.find(x=>x.code===e.code);
     if(!i) return '';
-    let price=i.price;
-    if(myPromo&&myPromo.id==='pod_disc20'&&isPod(i)) price=Math.round(i.price*(1-myPromo.percent/100));
-    else if(myPromo&&myPromo.id.startsWith('discount')&&isJuice(i)) price=Math.round(i.price*(1-myPromo.percent/100));
     const key=ckey(e.code,e.flavor,e.street);
     return '<div class="crow"><img src="'+(i.img||'')+'" alt="">'+
-      '<div class="m"><b>'+i.name+'</b><small>'+fmt(price)+' ₽ × '+e.q+
+      '<div class="m"><b>'+i.name+'</b><small>'+fmt(itemPrice(i))+' ₽ × '+e.q+
       (e.flavor?' · 🎯 '+e.flavor:'')+' · 📍 '+(e.street||'—')+'</small></div>'+
       '<div class="step"><button onclick="changeQty(\''+key+'\',-1)">−</button><b>'+e.q+'</b>'+
       '<button onclick="changeQty(\''+key+'\',1)">+</button></div>'+
-      '<div class="sum">'+fmt(price*e.q)+' ₽</div></div>';
+      '<div class="sum">'+fmt(itemPrice(i)*e.q)+' ₽</div></div>';
   }).join('');
-  const dev=deliveryPrice();
-  const goods=cartTotal();
-  const grand=goods+dev;
   let promoHTML='';
   if(myPromo){
     promoHTML='<div class="coupon">🎟 Активен промокод <b>'+myPromo.code+'</b> — скидка '+myPromo.percent+'%'+
-      (myPromo.id==='pod_disc20'?' на подики':' на жижки')+' уже в ценах выше.</div>';
+      (myPromo.id==='pod_disc20'?' на подики':' на жижки')+', уже в ценах выше. Одноразовый.</div>';
   }
   let couponHTML='';
   if(coupon){
@@ -946,7 +938,7 @@ function renderCart(){
     :pickupBlock();
   el.innerHTML=shipBarHTML()+rows+promoHTML+couponHTML+
     '<h2 class="sec">Промокод</h2>'+
-    '<input class="f" id="f-promo" placeholder="🎟 Промокод (необязательно)" value="'+(load('promo_input','')||'')+'" oninput="save(\'promo_input\',this.value)">'+
+    '<input class="f" id="f-promo" placeholder="🎟 Введи промокод (необязательно)" value="'+(load('promo_input','')||'')+'" oninput="save(\'promo_input\',this.value)">'+
     '<h2 class="sec">Получение</h2>'+
     '<div style="display:flex;gap:8px;margin-bottom:12px">'+
     '<button style="flex:1;padding:13px;border-radius:15px;cursor:pointer;border:1.5px solid '+(orderType==='delivery'?'var(--acc)':'var(--line)')+';background:'+(orderType==='delivery'?'var(--soft)':'var(--glass)')+';color:var(--text);font-weight:700;font-size:13px" onclick="setOrderType(\'delivery\')">🚚 Доставка</button>'+
@@ -958,9 +950,9 @@ function renderCart(){
     '<input class="f" id="f-note" placeholder="👅 Примечание (необязательно)" value="'+(load('flavor','')||'')+'">'+
     '<div class="sumbox">'+
     '<div class="r"><span>Позиций:</span><b>'+entries.reduce((a,e)=>a+e.q,0)+'</b></div>'+
-    '<div class="r"><span>Товары:</span><b>'+fmt(goods)+' ₽</b></div>'+
-    '<div class="r"><span>'+(orderType==='pickup'?'Самовывоз':'Доставка')+':</span><b id="r-del">'+(dev?fmt(dev)+' ₽':'бесплатно')+'</b></div>'+
-    '<div class="r total"><span>Итого:</span><b id="r-total">'+fmt(grand)+' ₽</b></div>'+
+    '<div class="r"><span>Товары:</span><b>'+fmt(cartTotal())+' ₽</b></div>'+
+    '<div class="r"><span>'+(orderType==='pickup'?'Самовывоз':'Доставка')+':</span><b id="r-del">'+(deliveryPrice()?fmt(deliveryPrice())+' ₽':'бесплатно')+'</b></div>'+
+    '<div class="r total"><span>Итого:</span><b id="r-total">'+fmt(cartTotal()+deliveryPrice())+' ₽</b></div>'+
     '<button class="cta" onclick="submitOrder()">Оформить заказ</button>'+
     '<button class="clear-btn" onclick="clearCart()">Очистить корзину</button></div>';
   if(orderType==='delivery'&&load('faddress','')) recalcDelivery();
@@ -972,59 +964,54 @@ function submitOrder(){
   const addrEl=document.getElementById('f-address');
   const address=addrEl?addrEl.value.trim():'';
   if(!isPickup&&!address){ toast('Укажи адрес доставки 🏠'); haptic('warn'); return; }
-  const nameEl=document.getElementById('f-name');
-  const phoneEl=document.getElementById('f-phone');
-  const noteEl=document.getElementById('f-note');
-  const promoEl=document.getElementById('f-promo');
-  const name=nameEl?nameEl.value.trim():'';
-  const phone=phoneEl?phoneEl.value.trim():'';
-  const note=noteEl?noteEl.value.trim():'';
-  const promoCode=promoEl?promoEl.value.trim().toUpperCase():'';
+  const name=(document.getElementById('f-name')||{value:''}).value.trim();
+  const phone=(document.getElementById('f-phone')||{value:''}).value.trim();
+  const note=(document.getElementById('f-note')||{value:''}).value.trim();
+  const promoIn=(document.getElementById('f-promo')||{value:''}).value.trim().toUpperCase();
   if(!name||!phone){ toast('Заполни имя и контакт'); haptic('warn'); return; }
-  save('fname',name); save('fphone',phone); save('faddress',address); save('flavor',note); save('promo_input',promoCode);
+  save('fname',name); save('fphone',phone); save('faddress',address); save('flavor',note); save('promo_input',promoIn);
   const items=cartEntries().filter(e=>ITEMS.some(x=>x.code===e.code)).map(e=>{
     const i=ITEMS.find(x=>x.code===e.code);
-    let price=i.price;
-    if(myPromo&&myPromo.id==='pod_disc20'&&isPod(i)) price=Math.round(i.price*(1-myPromo.percent/100));
-    else if(myPromo&&myPromo.id.startsWith('discount')&&isJuice(i)) price=Math.round(i.price*(1-myPromo.percent/100));
-    return {code:e.code,name:i.name,price:price,qty:e.q,street:e.street||(itemStreets(i)[0]||'—'),flavor:e.flavor,cat:i.cat||''};
+    return {code:e.code,name:i.name,price:itemPrice(i),qty:e.q,
+            street:e.street||(itemStreets(i)[0]||'—'),flavor:e.flavor,cat:i.cat||''};
   });
   const total=items.reduce((a,x)=>a+x.price*x.qty,0);
   const delivery=deliveryPrice();
+  const juiceQty=items.filter(x=>isJuice(x)).reduce((a,x)=>a+x.qty,0);
+  const per=PRIZES.spins_per_juice||2;
   const payload={type:'order',name:name,phone:phone,items:items,total:total,delivery:delivery,
     address:isPickup?('Самовывоз: '+pickupShop):address,
     order:isPickup?('самовывоз · '+pickupShop):'доставка',
     shop:deliveryShop?deliveryShop.name:null,
     km:isPickup?null:deliveryKm,
-    promo:promoCode||null,
+    promo:promoIn||null,
     applied_prize:(coupon&&coupon.id==='free_delivery')?{id:coupon.id,title:coupon.title}:null,
-    prizes_used:spinsUsed};
+    prizes_used:spinsUsed,
+    spins_expected:juiceQty*per};
   if(note) payload.flavor=note;
-  /* начисляем прокрутки локально: за жижи минус использованные */
-  const juiceQty=items.filter(x=>isJuice(x)).reduce((a,x)=>a+x.qty,0);
-  const per=PRIZES.spins_per_juice||2;
-  const netSpins=juiceQty*per-spinsUsed.length;
-  save('pending_spins',Math.max(0,netSpins));
+  /* прокрутки за жижи покажем сразу после отправки, финальный счёт подтвердит бот */
+  const gained=juiceQty*per;
+  save('pending_spins',gained);
   spinsUsed=[]; save('spins_used',spinsUsed);
-  myPromo=null;
+  coupon=null; save('coupon',coupon);
   tg.sendData(JSON.stringify(payload));
 }
 function renderOrders(){
   const box=document.getElementById('orders-box');
   if(!orders.length){ box.innerHTML='<p>Заказов пока не было. Оформи первый — он появится здесь 📜</p>'; return; }
   box.innerHTML=orders.map(o=>
-   '<div class="order-card"><div class="l"><b>'+o.count+' поз. · '+o.total+' ₽</b><small>'+o.date+'</small></div>'+
+    '<div class="order-card"><div class="l"><b>'+o.count+' поз. · '+o.total+' ₽</b><small>'+o.date+'</small></div>'+
     '<div class="s">отправлен</div></div>').join('');
 }
-
-let toastTimer;
-function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+function showDone(total,spinsAdded){
+  cart={}; save('cart',cart);
+  if(spinsAdded){ SPINS+=spinsAdded; renderSpinsUI(); }
+  document.getElementById('done-total').textContent=fmt(total)+' ₽';
+  document.getElementById('done-spins').textContent=spinsAdded
+    ?('🎰 Начислено прокруток: '+spinsAdded+'! Крути рулетку!')
+    :'Мы уже получили заявку и скоро свяжемся с тобой.';
+  go('done'); confetti();
 }
-
 function confetti(){
   const colors=['#a855f7','#d946ef','#22d3ee','#ffd166','#ff5c8a'];
   for(let i=0;i<50;i++){
@@ -1038,7 +1025,6 @@ function confetti(){
     setTimeout(()=>c.remove(),4000);
   }
 }
-
 function go(p){
   ['cat','rl','cart','info','done'].forEach(id=>{
     const v=document.getElementById('v-'+id);
@@ -1051,7 +1037,13 @@ function go(p){
   window.scrollTo(0,0);
   if(p==='cart') renderCart();
 }
-
+let toastTimer;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
 window.addEventListener('message',function(e){
   try{
     const d=typeof e.data==='string'?JSON.parse(e.data):e.data;
@@ -1059,20 +1051,10 @@ window.addEventListener('message',function(e){
   }catch(err){}
 });
 
-function showDone(total,spinsAdded){
-  cart={}; save('cart',cart);
-  spinsUsed=[]; save('spins_used',spinsUsed);
-  coupon=null; save('coupon',coupon);
-  document.getElementById('done-total').textContent=fmt(total)+' ₽';
-  document.getElementById('done-spins').textContent=spinsAdded
-    ?('🎰 Начислено прокруток: '+spinsAdded+'! Крути рулетку!')
-    :'Мы уже получили заявку и скоро свяжемся с тобой.';
-  go('done'); confetti();
-}
-
 loadProducts().catch(()=>{});
 initShops().catch(()=>{});
 renderBadge();
 </script>
 </body>
 </html>
+
