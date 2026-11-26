@@ -5,7 +5,10 @@
   "price": 500,
   "cat": "💧 Жижки",
   "street": "Российская",
-  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795687156734.jpg"
+  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795687156734.jpg",
+  "streets": [
+   "Российская"
+  ]
  },
  {
   "code": "p1795687214873",
@@ -13,7 +16,10 @@
   "price": 550,
   "cat": "💧 Жижки",
   "street": "Российская",
-  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795687214873.jpg"
+  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795687214873.jpg",
+  "streets": [
+   "Российская"
+  ]
  },
  {
   "code": "p1795687219622",
@@ -21,7 +27,10 @@
   "price": 550,
   "cat": "💧 Жижки",
   "street": "Российская",
-  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795687219622.jpg"
+  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795687219622.jpg",
+  "streets": [
+   "Российская"
+  ]
  },
  {
   "code": "p1795687276742",
@@ -29,7 +38,10 @@
   "price": 500,
   "cat": "💧 Жижки",
   "street": "Российская",
-  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795687276742.jpg"
+  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795687276742.jpg",
+  "streets": [
+   "Российская"
+  ]
  },
  {
   "code": "p1795687691215",
@@ -37,7 +49,10 @@
   "price": 2700,
   "cat": "💨 Подики",
   "street": "Российская",
-  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795687691215.jpg"
+  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795687691215.jpg",
+  "streets": [
+   "Российская"
+  ]
  },
  {
   "code": "p1795691540335",
@@ -48,29 +63,99 @@
   "flavors": [
    {
     "name": "Мятная жвачка",
-    "qty": 1
+    "qty": 1,
+    "stock": {
+     "Российская": 1
+    }
    },
    {
     "name": "Драйв оригинал",
-    "qty": 1
+    "qty": 1,
+    "stock": {
+     "Российская": 1
+    }
    },
    {
     "name": "HQD с мишками",
-    "qty": 1
+    "qty": 1,
+    "stock": {
+     "Российская": 1
+    }
    },
    {
     "name": "Редбул арбуз",
-    "qty": 1
+    "qty": 1,
+    "stock": {
+     "Российская": 1
+    }
    },
    {
     "name": "Флеш оригинал",
-    "qty": 1
+    "qty": 1,
+    "stock": {
+     "Российская": 1
+    }
    },
    {
     "name": "Лит Энерджи малина",
-    "qty": 1
+    "qty": 1,
+    "stock": {
+     "Российская": 1
+    }
    }
   ],
-  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795691540335.jpg"
+  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795691540335.jpg",
+  "streets": [
+   "Российская"
+  ]
+ },
+ {
+  "code": "p1795692373407",
+  "name": "🩸 ЗЛАЯ НОВИНКА \n\n🔥Жидкость ЗЛАЯ ЛАБУБУ SOUR 70мг — 450₽\n\nВкусы:Мятная жвачка,\nДрайв оригинал,\nHQD с мишками,\nРедбул арбуз,\nФлеш оригинал,\nЛит Энерджи малина,",
+  "price": 500,
+  "cat": "💧 Жижки",
+  "street": "Российская",
+  "streets": [
+   "Российская"
+  ],
+  "flavors": [
+   {
+    "name": "Вкусы: Мятная жвачка",
+    "stock": {
+     "Российская": 1
+    }
+   },
+   {
+    "name": "Драйв оригинал",
+    "stock": {
+     "Российская": 1
+    }
+   },
+   {
+    "name": "HQD с мишками",
+    "stock": {
+     "Российская": 1
+    }
+   },
+   {
+    "name": "Редбул арбуз",
+    "stock": {
+     "Российская": 1
+    }
+   },
+   {
+    "name": "Флеш оригинал",
+    "stock": {
+     "Российская": 1
+    }
+   },
+   {
+    "name": "Лит Энерджи малина",
+    "stock": {
+     "Российская": 1
+    }
+   }
+  ],
+  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795692373407.jpg"
  }
 ]
