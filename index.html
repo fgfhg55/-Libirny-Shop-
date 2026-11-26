@@ -284,6 +284,7 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
   transition:all .25s cubic-bezier(.2,1.4,.4,1)}
 .flav-chip.on{border-color:var(--acc);background:var(--acc-soft);
   box-shadow:0 0 0 3px var(--acc-soft);color:var(--acc)}
+.flav-chip.off{opacity:.3;pointer-events:none}
 .flav-chip small{display:block;font-size:10px;color:var(--muted);font-weight:600;margin-top:2px}
 .sh-rev{margin:16px 0 4px;padding:14px 16px;border-radius:18px;
   background:rgba(255,255,255,.04);border:1px solid var(--line)}
@@ -484,9 +485,9 @@ nav .npill{position:absolute;top:5px;right:calc(50% - 24px);
   <div class="hero">
     <div class="kick">Libirny Shop · 2026</div>
     <h2 id="hero-title">Новые позиции<br><span>уже здесь</span></h2>
-    <p>Выбирай вкус, собирай корзину — заявка уйдёт нам в бота.</p>
+    <p>Выбирай точку и вкус — всё в наличии видно сразу.</p>
     <div class="hero-tags">
-      <div class="htag">🎯 Вкусы в наличии</div>
+      <div class="htag">🎯 Вкусы по точкам</div>
       <div class="htag">⚡ Доставка</div>
       <div class="htag">💬 Поддержка</div>
     </div>
@@ -544,13 +545,13 @@ nav .npill{position:absolute;top:5px;right:calc(50% - 24px);
   </div>
   <div class="icard">
     <h3>🛍 О магазине</h3>
-    <p>Libirny Shop — небольшой магазин с каталогом 18+. Две точки: Российская 24 и Чоппа дом 2. Выбирай вкус — если он в наличии, он есть в карточке; распродали — он сам исчезает из каталога.</p>
+    <p>Libirny Shop — небольшой магазин с каталогом 18+. Две точки: Российская 24 и Чоппа дом 2. У каждой точки своё наличие: вкусы, которых нет на точке, горят тёмным.</p>
   </div>
   <div class="icard">
     <h3>🚚 Доставка и оплата</h3>
     <ul>
       <li>Доставка считается от той точки, где лежит твой товар: с Российской 24 — бесплатно, с Чоппы дом 2 — от 10 до 100 ₽ по расстоянию.</li>
-      <li>Самовывоз с любой точки — бесплатно, укажи только удобную.</li>
+      <li>Самовывоз с той точки, где реально лежит твой заказ — бесплатно.</li>
       <li>Бесплатная доставка от 3000 ₽ — прогресс виден в корзине.</li>
       <li>Оплата обсуждается лично при подтверждении заказа.</li>
     </ul>
@@ -648,11 +649,9 @@ function load(k,def){ try{ const s = localStorage.getItem(tstore()+'_'+k); retur
 /* ============ СОСТОЯНИЕ ============ */
 let ITEMS = [], STREETS = [], curStreet = null;
 let cart = load('cart',{});
-/* миграция старой корзины: числа → {q, f} */
-(function(){ for(const k in cart){ if(typeof cart[k]==='number') cart[k]={q:cart[k],f:null}; } })();
 let favs = load('favs',[]);
 let recent = load('recent',[]), orders = load('orders',[]), ratings = load('ratings',{});
-let curCat = 'Все', curSort = 'new', shItem = null, shCount = 1, shFlavor = null;
+let curCat = 'Все', curSort = 'new', shItem = null, shCount = 1, shFlavor = null, shStreet = null;
 const FREE_SHIP = 3000;
 
 /* Доставка по расстоянию */
@@ -664,11 +663,35 @@ const SHOPS = [
   {name: 'Чоппа дом 2',   addr: 'Чоппа, 2, Челябинск',       lat: null, lon: null, min: 10, max: 100}
 ];
 
-/* ============ ВКУСЫ ============ */
+/* ============ НАЛИЧИЕ ПО ТОЧКАМ ============ */
 function hasFlavors(p){ return !!(p.flavors && p.flavors.length); }
-function liveFlavors(p){ return hasFlavors(p) ? p.flavors.filter(f=>(f.qty||0)>0) : []; }
-function inStock(p){ return !hasFlavors(p) || liveFlavors(p).length>0; }
-function flavorStock(p, fl){ const f=(p.flavors||[]).find(x=>x.name===fl); return f?(f.qty||0):0; }
+function pStreets(p){
+  const s = (p.streets && p.streets.length) ? p.streets.slice() : (p.street ? [p.street] : []);
+  return s.filter(Boolean);
+}
+function fStockAt(p, f, st){
+  if(f.stock) return f.stock[st] || 0;
+  return f.qty || 0;   /* старый формат: наличие на всей точке товара */
+}
+function fStockSum(f){
+  if(f.stock) return Object.values(f.stock).reduce((a,b)=>a+(b||0),0);
+  return f.qty || 0;
+}
+function itemStreets(p){
+  const ps = pStreets(p);
+  if(hasFlavors(p)){
+    const s = ps.filter(st=>p.flavors.some(f=>fStockAt(p,f,st)>0));
+    return s;
+  }
+  return ps;
+}
+function liveFlavors(p, st){
+  if(!hasFlavors(p)) return [];
+  if(st) return p.flavors.filter(f=>fStockAt(p,f,st)>0);
+  return p.flavors.filter(f=>fStockSum(f)>0);
+}
+function inStock(p){ return !hasFlavors(p) ? pStreets(p).length>0 : liveFlavors(p).length>0; }
+function ckey(code, fl, st){ return code+'|'+(fl||'')+'|'+(st||''); }
 
 /* ============ ТЕМЫ ============ */
 let curTheme = load('theme','violet');
@@ -735,24 +758,48 @@ async function loadProducts(){
   el.innerHTML = Array(4).fill(
     '<div class="skel"><div class="sk-img shimmer"></div><div class="sk-l shimmer"></div><div class="sk-l short shimmer"></div></div>'
   ).join('');
+  let raw = [];
   try{
     const r = await fetch('products.json?t='+Date.now());
-    let raw = await r.json();
+    raw = await r.json();
     if(!Array.isArray(raw)) raw = [];
-    /* распроданные вкусы пропадают целиком с витрины */
-    ITEMS = raw.filter(inStock);
-    /* чистим корзину от закончившихся вкусов и исчезнувших товаров */
-    let changed = false;
-    for(const k of Object.keys(cart)){
-      const i = k.indexOf('|');
-      const code = k.slice(0,i), fl = k.slice(i+1)||null;
-      const p = raw.find(x=>x.code===code);
-      if(!p || (hasFlavors(p) && (flavorStock(p,fl)<=0 || !p.flavors.some(x=>x.name===fl)))){
-        delete cart[k]; changed = true;
+  }catch(e){ raw = []; }
+
+  /* приводим к формату «наличие по точкам» и чистим корзину */
+  raw = raw.map(p=>{
+    const sts = (p.streets && p.streets.length) ? p.streets : (p.street ? [p.street] : []);
+    (p.flavors||[]).forEach(f=>{
+      if(!f.stock){
+        f.stock = {};
+        sts.forEach(st=>{ f.stock[st] = f.qty||0; });
       }
+    });
+    p.streets = sts.filter(Boolean);
+    return p;
+  });
+  ITEMS = raw.filter(inStock);
+
+  let changed = false;
+  for(const k of Object.keys(cart)){
+    const parts = k.split('|');
+    const code = parts[0], fl = parts[1]||null, st = parts[2]||null;
+    const p = raw.find(x=>x.code===code);
+    if(!p){ delete cart[k]; changed = true; continue; }
+    if(!hasFlavors(p)){
+      if(!pStreets(p).length){ delete cart[k]; changed = true; }
+      continue;
     }
-    if(changed) save('cart',cart);
-  }catch(e){ ITEMS = []; }
+    const f = p.flavors.find(x=>x.name===fl);
+    if(!f){ delete cart[k]; changed = true; continue; }
+    let nst = (st && fStockAt(p,f,st)>0) ? st : (pStreets(p).find(s=>fStockAt(p,f,s)>0)||null);
+    if(!nst){ delete cart[k]; changed = true; continue; }
+    if(nst !== st){
+      const nk = ckey(code, fl, nst);
+      cart[nk] = cart[k]; delete cart[k]; changed = true;
+    }
+  }
+  if(changed) save('cart',cart);
+
   try{
     const rs = await fetch('streets.json?t='+Date.now());
     let raw2 = await rs.json();
@@ -776,8 +823,8 @@ function animNum(id,target){
 function renderStreets(){
   const w = document.getElementById('streets-wrap');
   if(!STREETS.length){ w.innerHTML=''; return; }
-  w.innerHTML = '<div class="rv-title">📍 Улицы</div><div class="streets">'+STREETS.map(s=>{
-    const n = ITEMS.filter(i=>i.street===s.name).length;
+  w.innerHTML = '<div class="rv-title">📍 Точки</div><div class="streets">'+STREETS.map(s=>{
+    const n = ITEMS.filter(i=>itemStreets(i).includes(s.name)).length;
     return `<div class="scard ${curStreet===s.name?'on':''}" onclick="pickStreet('${s.name.replace(/'/g,"\\'")}')"><span class="ic">📍</span><b>${s.name}</b><small>${n} товаров</small></div>`;
   }).join('')+'</div>';
 }
@@ -799,7 +846,7 @@ function renderHit(){
 
 /* ============ КАТЕГОРИИ / СОРТИРОВКА / ПОИСК ============ */
 function renderChips(){
-  const cats = ['Все',...new Set(ITEMS.filter(i=>!curStreet||i.street===curStreet).map(i=>i.cat).filter(Boolean))];
+  const cats = ['Все',...new Set(ITEMS.filter(i=>!curStreet||itemStreets(i).includes(curStreet)).map(i=>i.cat).filter(Boolean))];
   document.getElementById('chips').innerHTML = cats.map(c =>
     `<div class="chip ${c===curCat?'on':''}" onclick="setCat('${c.replace(/'/g,"\\'")}')">${c}</div>`).join('');
 }
@@ -816,7 +863,7 @@ function clearSearch(){ document.getElementById('q').value=''; onSearch(); }
 function filtered(){
   const q = (document.getElementById('q').value||'').toLowerCase().trim();
   let list = ITEMS.filter(i =>
-    (!curStreet || i.street===curStreet) && (curCat==='Все'||i.cat===curCat) && (!q || String(i.name).toLowerCase().includes(q))
+    (!curStreet || itemStreets(i).includes(curStreet)) && (curCat==='Все'||i.cat===curCat) && (!q || String(i.name).toLowerCase().includes(q))
   );
   if(curSort==='asc') list = list.slice().sort((a,b)=>a.price-b.price);
   if(curSort==='desc') list = list.slice().sort((a,b)=>b.price-a.price);
@@ -838,6 +885,7 @@ function cardHTML(i,n,inFav){
   const isFav = inFav !== undefined ? inFav : favs.includes(i.code);
   const img = i.img ? `<img src="${i.img}" alt="" loading="lazy">` : '<div class="noimg">🛍️</div>';
   const old = i.old_price && i.old_price>i.price ? '<span class="oldp">'+fmt(i.old_price)+'</span>' : '';
+  const pts = itemStreets(i).join(' · ')||'—';
   const flHint = hasFlavors(i) ? `<small style="display:block;color:var(--muted);font-size:10.5px;margin-top:3px">🎯 ${liveFlavors(i).map(f=>f.name).join(' · ')}</small>` : '';
   const addBtn = hasFlavors(i)
     ? `<button class="add" id="add-${i.code}" onclick="event.stopPropagation();openSheet('${i.code}')">+</button>`
@@ -852,6 +900,7 @@ function cardHTML(i,n,inFav){
       <div class="pbody">
         <div class="pcat">${i.cat||''} ${starsOf(i.code)}</div>
         <div class="pname">${i.name}</div>
+        <div style="font-size:10.5px;color:var(--muted);margin-top:2px">📍 ${pts}</div>
         ${flHint}
         <div class="prow">
           <div class="pprice">${old}${fmt(i.price)} <small>₽</small></div>
@@ -924,364 +973,14 @@ function setRate(n){
 function openSheet(code){
   const i = ITEMS.find(x=>x.code===code);
   if(!i) return;
-  shItem = i; shCount = 1; shFlavor = null;
+  shItem = i; shCount = 1; shFlavor = null; shStreet = null;
   pushRecent(code);
+  const sts = itemStreets(i);
+  if(curStreet && sts.includes(curStreet)) shStreet = curStreet;
   document.getElementById('sh-img').innerHTML = i.img ? `<img src="${i.img}">` : '<div class="noimg" style="height:100%">🛍️</div>';
-  document.getElementById('sh-cat').textContent = (i.cat||'')+' · 📍 '+(i.street||'—');
+  document.getElementById('sh-cat').textContent = (i.cat||'')+' · 📍 '+sts.join(' · ');
   document.getElementById('sh-name').textContent = i.name;
   document.getElementById('sh-price').innerHTML =
     (i.old_price&&i.old_price>i.price?'<span class="oldp" style="font-size:15px">'+fmt(i.old_price)+' ₽</span> ':'')
     + fmt(i.price)+' <small>₽</small>';
-  document.getElementById('sh-per').textContent = i.desc ? i.desc : 'Точка: '+(i.street||'—')+' · оформление через бота';
-  renderFlavorChips(); updSh(); updShFav(); renderStarsBig();
-  document.getElementById('ovl').classList.add('on');
-  document.getElementById('sheet').classList.add('on');
-  haptic();
-}
-function renderFlavorChips(){
-  const box = document.getElementById('sh-flavors');
-  if(!shItem || !hasFlavors(shItem)){ box.innerHTML=''; return; }
-  const fls = liveFlavors(shItem);
-  box.innerHTML = '<div class="rv-title" style="padding:14px 0 8px">🎯 Выбери вкус</div><div class="flav-row">'+
-    fls.map(f=>`<div class="flav-chip ${shFlavor===f.name?'on':''}" onclick="pickFlavor('${f.name.replace(/'/g,"\\'")}')">${f.name}<small>осталось ${f.qty}</small></div>`).join('')+'</div>';
-}
-function pickFlavor(name){
-  shFlavor = name; haptic();
-  renderFlavorChips(); updSh();
-}
-function closeSheet(){
-  document.getElementById('ovl').classList.remove('on');
-  document.getElementById('sheet').classList.remove('on');
-}
-let tsY = null;
-document.getElementById('grab').addEventListener('touchstart', e=>{ tsY = e.touches[0].clientY; },{passive:true});
-document.getElementById('grab').addEventListener('touchmove', e=>{
-  if(tsY===null) return;
-  const dy = e.touches[0].clientY - tsY;
-  if(dy>0) document.getElementById('sheet').style.transform = 'translateY('+dy+'px)';
-},{passive:true});
-document.getElementById('grab').addEventListener('touchend', e=>{
-  if(tsY===null) return;
-  const dy = e.changedTouches[0].clientY - tsY;
-  document.getElementById('sheet').style.transform = '';
-  if(dy>90) closeSheet();
-  tsY = null;
-});
-function updSh(){
-  const max = (hasFlavors(shItem) && shFlavor) ? flavorStock(shItem, shFlavor) : 99;
-  if(shCount > max) shCount = Math.max(1, max);
-  document.getElementById('sh-q').textContent = shCount;
-  const btn = document.getElementById('sh-add');
-  if(hasFlavors(shItem) && !shFlavor){
-    btn.textContent = 'Выбери вкус 🎯';
-  } else {
-    btn.textContent = 'Добавить · '+fmt(shItem.price*shCount)+' ₽';
-  }
-}
-function shQty(d){ shCount = Math.max(1,shCount+d); updSh(); haptic(); }
-function shAdd(){
-  if(hasFlavors(shItem) && !shFlavor){ toast('Сначала выбери вкус 🎯'); haptic('warn'); return; }
-  const key = shItem.code + '|' + (shFlavor||'');
-  const already = cart[key] ? cart[key].q : 0;
-  const max = hasFlavors(shItem) && shFlavor ? flavorStock(shItem, shFlavor) : Infinity;
-  if(already + shCount > max){
-    toast('В наличии только '+max+' шт этого вкуса'); haptic('warn'); return;
-  }
-  cart[key] = {q: already + shCount, f: shFlavor};
-  save('cart',cart);
-  closeSheet(); renderList(); renderBadge();
-  toast(shFlavor?('«'+shFlavor+'» в корзине ✓'):'Добавлено в корзину ✓'); haptic('ok');
-}
-
-/* ============ КОРЗИНА ============ */
-function addToCart(code){
-  cart[code+'|'] = {q:(cart[code+'|']?cart[code+'|'].q:0)+1, f:null};
-  save('cart',cart);
-  renderList(); renderBadge();
-  deliveryCost = null; deliveryKm = null; deliveryShop = null;
-  if(document.getElementById('cart-body').innerHTML) renderCart();
-  toast('Добавлено в корзину ✓'); haptic('ok');
-  const b = document.getElementById('add-'+code);
-  if(b){
-    b.classList.add('done'); b.textContent = '✓';
-    setTimeout(()=>{ b.classList.remove('done'); b.textContent = '+'; }, 900);
-  }
-}
-function changeQty(key,d){
-  if(!cart[key]) return;
-  cart[key].q += d;
-  if(cart[key].q<=0) delete cart[key];
-  save('cart',cart);
-  renderCart(); renderList(); renderBadge(); haptic();
-}
-function clearCart(){ cart = {}; save('cart',cart); renderCart(); renderList(); renderBadge(); haptic('warn'); }
-function renderBadge(){
-  const n = cartEntries().reduce((a,e)=>a+e.q,0);
-  const b = document.getElementById('badge'), nb = document.getElementById('nav-badge');
-  b.textContent = n; b.style.display = n?'flex':'none';
-  nb.textContent = n; nb.style.display = n?'flex':'none';
-}
-function cartEntries(){
-  return Object.keys(cart).map(k=>{
-    const i = k.indexOf('|');
-    return {code:k.slice(0,i), flavor:k.slice(i+1)||null, q:cart[k].q};
-  });
-}
-function codeQty(code){
-  return cartEntries().filter(e=>e.code===code).reduce((a,e)=>a+e.q,0);
-}
-function cartTotal(){
-  return cartEntries().reduce((a,e)=>{
-    const i = ITEMS.find(x=>x.code===e.code);
-    return a + (i ? i.price*e.q : 0);
-  },0);
-}
-function shipBarHTML(){
-  const total = cartTotal();
-  if(total >= FREE_SHIP){
-    return `<div class="shipbar">
-      <div class="sb-t">🎉 <b>Бесплатная доставка</b> — порог достигнут!</div>
-      <div class="sb-track"><div class="sb-fill" style="width:100%"></div></div>
-    </div>`;
-  }
-  const left = FREE_SHIP - total;
-  const pct = Math.min(100, Math.round(total/FREE_SHIP*100));
-  return `<div class="shipbar">
-    <div class="sb-t">До бесплатной доставки: <b>${fmt(left)} ₽</b></div>
-    <div class="sb-track"><div class="sb-fill" style="width:${pct}%"></div></div>
-  </div>`;
-}
-
-/* ============ ДОСТАВКА ПО РАССТОЯНИЮ ============ */
-async function geocode(address){
-  try{
-    const q = encodeURIComponent(address);
-    const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=ru&q='+q);
-    const j = await r.json();
-    if(j && j[0]) return {lat:+j[0].lat, lon:+j[0].lon};
-  }catch(e){}
-  return null;
-}
-async function initShops(){
-  for(const s of SHOPS){
-    if(s.lat === null){
-      const p = await geocode(s.addr);
-      if(p){ s.lat = p.lat; s.lon = p.lon; }
-    }
-  }
-}
-function distKm(a,b){
-  const R = 6371, toR = x=>x*Math.PI/180;
-  const dLat = toR(b.lat-a.lat), dLon = toR(b.lon-a.lon);
-  const h = Math.sin(dLat/2)**2 + Math.cos(toR(a.lat))*Math.cos(toR(b.lat))*Math.sin(dLon/2)**2;
-  return 2*R*Math.asin(Math.sqrt(h));
-}
-function streetsInCart(){
-  const set = new Set();
-  cartEntries().forEach(e=>{
-    const i = ITEMS.find(x=>x.code===e.code);
-    if(i && i.street) set.add(i.street);
-  });
-  return [...set];
-}
-function shopForStreet(st){
-  return SHOPS.find(s=>s.name.toLowerCase().startsWith(String(st).toLowerCase())) || null;
-}
-function calcDelivery(shop, km){
-  if(!shop) return null;
-  if(shop.min===0 && shop.max===0) return 0;
-  const t = Math.max(0, Math.min(1, km/6));
-  return Math.round(shop.min + (shop.max-shop.min)*t);
-}
-function pickupShopsAvailable(){
-  const sts = streetsInCart();
-  const names = new Set();
-  sts.forEach(st=>{ const s = shopForStreet(st); if(s) names.add(s.name); });
-  return SHOPS.filter(s=>names.has(s.name));
-}
-function pickupBlock(){
-  const avail = pickupShopsAvailable();
-  if(avail.length===1 && pickupShop!==avail[0].name) pickupShop = avail[0].name;
-  return `<div class="rv-title">🏠 Точка самовывоза</div>
-    <div class="streets" style="padding:0 0 8px">
-      ${SHOPS.map(s=>{
-        const ok = avail.some(a=>a.name===s.name);
-        const lock = ok ? '' : 'style="opacity:.35;pointer-events:none"';
-        return `<div class="scard ${pickupShop===s.name?'on':''}" ${lock}
-          onclick="${ok?`pickupShop='${s.name}';haptic();renderCart()`:''}">
-          <span class="ic">${ok?'🏠':'🚫'}</span>
-          <b>${s.name}</b>
-          <small>${ok?'самовывоз — бесплатно':'этой позиции нет на точке'}</small>
-        </div>`;
-      }).join('')}
-    </div>`;
-}
-let devTimer = null;
-function onAddrInput(){
-  clearTimeout(devTimer);
-  const el = document.getElementById('dev-value');
-  if(el) el.textContent = 'дописываешь… посчитаю как закончишь';
-  devTimer = setTimeout(recalcDelivery, 2000);
-}
-function onAddrDone(){
-  clearTimeout(devTimer);
-  recalcDelivery();
-}
-async function recalcDelivery(){
-  const el = document.getElementById('dev-value');
-  if(orderType!=='delivery'){
-    deliveryCost=0; deliveryKm=null; deliveryShop=null;
-    if(el) el.textContent = 'бесплатно';
-    updTotals();
-    return;
-  }
-  const addrEl = document.getElementById('f-address');
-  const addr = addrEl ? addrEl.value.trim() : '';
-  if(!addr){
-    deliveryCost=null; deliveryKm=null; deliveryShop=null;
-    if(el) el.textContent='укажи адрес';
-    updTotals();
-    return;
-  }
-  if(el) el.textContent = 'считаю…';
-  const p = await geocode(addr+', Челябинск');
-  if(!p){ deliveryKm=null; deliveryCost=null; deliveryShop=null; if(el) el.textContent='адрес не найден — напиши полнее'; updTotals(); return; }
-  const sts = streetsInCart();
-  let shops = sts.map(shopForStreet).filter(Boolean).filter(s=>s.lat!==null);
-  if(!shops.length) shops = SHOPS.filter(s=>s.lat!==null);
-  let best = null, bestKm = Infinity;
-  for(const s of shops){
-    const km = distKm(s, p);
-    if(km < bestKm){ bestKm = km; best = s; }
-  }
-  if(!best){ if(el) el.textContent='точки не найдены'; updTotals(); return; }
-  if(bestKm > 15){ deliveryKm=null; deliveryCost=null; deliveryShop=null; if(el) el.textContent='адрес не найден — напиши полнее'; updTotals(); return; }
-  deliveryKm = bestKm;
-  deliveryShop = best;
-  deliveryCost = calcDelivery(best, bestKm);
-  if(el) el.textContent = deliveryKm.toFixed(1)+' км от '+best.name+' — '+(deliveryCost?fmt(deliveryCost)+' ₽':'бесплатно');
-  updTotals();
-}
-function updTotals(){
-  const dev = deliveryPrice();
-  const grand = cartTotal() + dev;
-  const dl = document.getElementById('r-del');
-  if(dl) dl.textContent = dev ? fmt(dev)+' ₽' : 'бесплатно';
-  const tt = document.getElementById('r-total');
-  if(tt) tt.textContent = fmt(grand)+' ₽';
-}
-function setOrderType(t){
-  orderType = t; haptic();
-  if(t==='pickup'){ deliveryCost = 0; }
-  else { deliveryCost = null; deliveryKm = null; deliveryShop = null; }
-  renderCart();
-}
-function deliveryPrice(){
-  if(orderType==='pickup') return 0;
-  if(cartTotal() >= FREE_SHIP) return 0;
-  return deliveryCost!==null ? deliveryCost : 0;
-}
-function renderCart(){
-  const el = document.getElementById('cart-body');
-  const entries = cartEntries().filter(e=>ITEMS.some(x=>x.code===e.code));
-  if(!entries.length){
-    el.innerHTML = '<div class="ghost"><span class="big">🛒</span>Корзина пуста<br>Загляни в каталог — там интересно'+
-      '<br><br><button class="cta" style="max-width:240px" onclick="go(\'cat\')">Перейти в каталог</button></div>';
-    return;
-  }
-  const rows = entries.map(e=>{
-    const i = ITEMS.find(x=>x.code===e.code);
-    if(!i) return '';
-    const key = e.code+'|'+(e.flavor||'');
-    return `<div class="crow">
-      <img src="${i.img||''}" alt="">
-      <div class="m"><b>${i.name}</b><small>${fmt(i.price)} ₽ × ${e.q}${e.flavor?' · 🎯 '+e.flavor:''} · ${i.street||'—'}</small></div>
-      <div class="step">
-        <button onclick="changeQty('${key}',-1)">−</button>
-        <b>${e.q}</b>
-        <button onclick="changeQty('${key}',1)">+</button>
-      </div>
-      <div class="sum">${fmt(i.price*e.q)} ₽</div></div>`;
-  }).join('');
-  const dev = deliveryPrice();
-  const grand = cartTotal() + dev;
-  const addrBlock = orderType==='delivery'
-    ? `<input class="f" id="f-address" placeholder="🏠 Адрес (улица, дом, квартира)" value="${load('faddress','')}"
-        oninput="onAddrInput()" onblur="onAddrDone()" onkeydown="if(event.key==='Enter'){onAddrDone();this.blur()}">
-       <div class="shipbar"><div class="sb-t">🚚 Доставка: <b id="dev-value">укажи адрес</b></div>
-       <div style="font-size:11px;color:var(--muted);margin-top:6px">Считается от точки, где лежит товар: Российская 24 — бесплатно, Чоппа дом 2 — 10–100 ₽</div></div>`
-    : pickupBlock();
-  el.innerHTML = shipBarHTML() + rows +
-    `<h2 class="sec">Получение</h2>
-    <div style="display:flex;gap:9px;margin-bottom:13px">
-      <button class="th ${orderType==='delivery'?'on':''}" style="flex:1" onclick="setOrderType('delivery')">🚚 Доставка</button>
-      <button class="th ${orderType==='pickup'?'on':''}" style="flex:1" onclick="setOrderType('pickup')">🏠 Самовывоз — 0 ₽</button>
-    </div>
-    ${addrBlock}
-    <h2 class="sec">Контакты</h2>
-    <input class="f" id="f-name" placeholder="Твоё имя" value="${load('fname','')}">
-    <input class="f" id="f-phone" placeholder="Телефон или @username" value="${load('fphone','')}">
-    <input class="f" id="f-note" placeholder="👅 Примечание (например: манго-лёд, 2 шт)" value="${load('flavor','')}">
-    <div class="sumbox">
-      <div class="r"><span>Позиций:</span><b>${entries.reduce((a,e)=>a+e.q,0)}</b></div>
-      <div class="r"><span>Товары:</span><b>${fmt(cartTotal())} ₽</b></div>
-      <div class="r"><span>${orderType==='pickup'?'Самовывоз':'Доставка'}:</span><b id="r-del">${dev?fmt(dev)+' ₽':'бесплатно'}</b></div>
-      <div class="r total"><span>Итого:</span><b id="r-total">${fmt(grand)} ₽</b></div>
-      <button class="cta" onclick="submitOrder()">Оформить заказ</button>
-      <button class="clear-btn" onclick="clearCart()">Очистить корзину</button>
-    </div>`;
-  observeNew(el);
-  if(orderType==='delivery' && load('faddress','')) recalcDelivery();
-}
-
-/* ============ ЗАКАЗ ============ */
-function submitOrder(){
-  if(!tg || !tg.sendData){ toast('Открой магазин через кнопку бота 🙂'); return; }
-  const isPickup = orderType==='pickup';
-  if(isPickup && !pickupShop){ toast('Выбери точку самовывоза 🏠'); haptic('warn'); return; }
-  const addressEl = document.getElementById('f-address');
-  const address = addressEl ? addressEl.value.trim() : '';
-  if(!isPickup && !address){ toast('Укажи адрес доставки 🏠'); haptic('warn'); return; }
-  const name = document.getElementById('f-name').value.trim();
-  const phone = document.getElementById('f-phone').value.trim();
-  const flavor = (document.getElementById('f-note')||{value:''}).value.trim();
-  if(!name || !phone){ toast('Заполни имя и контакт'); haptic('warn'); return; }
-  save('fname',name); save('fphone',phone); save('faddress',address); save('flavor',flavor);
-  const items = cartEntries().filter(e=>ITEMS.some(x=>x.code===e.code)).map(e=>{
-    const i = ITEMS.find(x=>x.code===e.code);
-    return { code:e.code, name:i.name, price:i.price, qty:e.q, street:i.street||'—', flavor:e.flavor };
-  });
-  const total = items.reduce((a,x)=>a+x.price*x.qty,0);
-  const delivery = deliveryPrice();
-  orders.unshift({ date:new Date().toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}),
-    count:items.reduce((a,x)=>a+x.qty,0), total });
-  orders = orders.slice(0,20);
-  save('orders',orders); renderOrders();
-  haptic('ok');
-  const payload = { type:'order', name, phone, items, total, delivery,
-                    address: isPickup ? ('Самовывоз: '+pickupShop) : address,
-                    order: isPickup?('самовывоз · '+pickupShop):'доставка',
-                    shop: deliveryShop ? deliveryShop.name : null,
-                    km: isPickup ? null : deliveryKm };
-  if(flavor) payload.flavor = flavor;
-  tg.sendData(JSON.stringify(payload));
-}
-function renderOrders(){
-  const box = document.getElementById('orders-box');
-  if(!orders.length){
-    box.innerHTML = '<p>Заказов пока не было. Оформи первый — он появится здесь 📜</p>';
-    return;
-  }
-  box.innerHTML = orders.map(o=>
-    `<div class="order-card">
-      <div class="l"><b>${o.count} поз. · ${o.total} ₽</b><small>${o.date}</small></div>
-      <div class="s">отправлен</div>
-    </div>`).join('');
-}
-
-/* ============ УСПЕХ ============ */
-function showDone(total){
-  cart = {}; save('cart',cart);
-  renderList(); renderBadge();
-  document.getElementById('done-total').textContent = fmt(total)+' ₽';
-  go('
+  document
