@@ -37,7 +37,7 @@ body{font-family:'Manrope',-apple-system,'Segoe UI',Roboto,sans-serif;
   background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;
   -webkit-font-smoothing:antialiased;transition:background .6s ease}
 
-/* ============ ФОН: МЕШ-ГРАДИЕНТ + ЗВЁЗДЫ ============ */
+/* ============ ФОН ============ */
 #stars{position:fixed;inset:0;z-index:0;pointer-events:none}
 .sky{position:fixed;inset:0;z-index:1;overflow:hidden;pointer-events:none}
 .mesh{position:absolute;inset:-20%;
@@ -59,7 +59,6 @@ body{font-family:'Manrope',-apple-system,'Segoe UI',Roboto,sans-serif;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 main{position:relative;z-index:5}
 
-/* шлейф за пальцем */
 .spark{position:fixed;width:7px;height:7px;border-radius:50%;pointer-events:none;z-index:95;
   filter:blur(1px);animation:spOut .6s ease-out forwards}
 @keyframes spOut{from{opacity:.8;transform:scale(1)}to{opacity:0;transform:scale(.2) translateY(14px)}}
@@ -146,7 +145,7 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
 .stat b{font-family:'Unbounded',sans-serif;font-size:17px;color:var(--acc);display:block}
 .stat span{font-size:10.5px;color:var(--muted);font-weight:600}
 
-/* ============ ХИТ ПРОДАЖ (БАННЕР) ============ */
+/* ============ ХИТ ПРОДАЖ ============ */
 .hit{margin:16px 16px 0;border-radius:30px;overflow:hidden;position:relative;cursor:pointer;
   border:1px solid var(--line);min-height:200px;display:flex;align-items:flex-end}
 .hit .hit-img{position:absolute;inset:0}
@@ -170,6 +169,15 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
   background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 8px 26px var(--glow);
   transition:transform .3s cubic-bezier(.2,1.4,.4,1)}
 .hit-btn:active{transform:scale(.94)}
+
+/* ============ УЛИЦЫ ============ */
+.streets{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:4px 16px 0}
+.scard{padding:18px 14px;border-radius:20px;cursor:pointer;background:var(--glass);
+  border:1px solid var(--line);transition:all .3s cubic-bezier(.2,1.4,.4,1)}
+.scard.on{border-color:var(--acc);box-shadow:0 0 0 4px var(--acc-soft);background:var(--acc-soft)}
+.scard .ic{font-size:22px;display:block;margin-bottom:6px}
+.scard b{display:block;font-size:14px}
+.scard small{color:var(--muted);font-size:11px;font-weight:600}
 
 /* ============ ПОИСК ============ */
 .search{margin:18px 16px 0;position:relative}
@@ -349,13 +357,14 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
 .step button:active{background:rgba(255,255,255,.22);transform:scale(.8)}
 .step b{min-width:22px;text-align:center;font-size:15px}
 h2.sec{font-size:17px;font-weight:800;margin:24px 0 13px;font-family:'Unbounded',sans-serif}
-input.f,textarea.f{width:100%;padding:17px 18px;margin-bottom:11px;
+input.f,textarea.f,select.f{width:100%;padding:17px 18px;margin-bottom:11px;
   border-radius:19px;border:1px solid var(--line);
   background:rgba(255,255,255,.045);color:var(--text);font-size:15px;
   font-family:'Manrope';outline:none;resize:none;
   transition:border .35s,box-shadow .35s,transform .3s cubic-bezier(.2,1.4,.4,1)}
 input.f::placeholder,textarea.f::placeholder{color:#6b5f80}
-input.f:focus,textarea.f:focus{border-color:var(--acc);box-shadow:0 0 0 4px var(--acc-soft);transform:scale(1.01)}
+input.f:focus,textarea.f:focus,select.f:focus{border-color:var(--acc);box-shadow:0 0 0 4px var(--acc-soft);transform:scale(1.01)}
+select.f option{background:#14101f;color:var(--text)}
 .shipbar{margin-bottom:14px;padding:16px 18px;border-radius:20px;
   background:rgba(255,255,255,.035);border:1px solid var(--line)}
 .shipbar .sb-t{font-size:12.5px;font-weight:700;margin-bottom:9px;color:var(--muted)}
@@ -507,7 +516,7 @@ nav .npill{position:absolute;top:5px;right:calc(50% - 24px);
   <div class="hero">
     <div class="kick">Libirny Shop · 2026</div>
     <h2 id="hero-title">Новые позиции<br><span>уже здесь</span></h2>
-    <p>Выбирай, добавляй в корзину и оформляй заказ — всё в пару касаний.</p>
+    <p>Выбирай свою улицу, добавляй в корзину и оформляй заказ — всё в пару касаний.</p>
     <div class="hero-tags">
       <div class="htag">⚡ Доставка</div>
       <div class="htag">🔒 Безопасно</div>
@@ -523,6 +532,8 @@ nav .npill{position:absolute;top:5px;right:calc(50% - 24px);
   <div class="warn" id="warn">⚠️ Открой магазин через кнопку бота, иначе заказ не отправится.</div>
 
   <div id="hit-wrap"></div>
+
+  <div id="streets-wrap"></div>
 
   <div class="rv-wrap" id="rv-wrap" style="display:none">
     <div class="rv-title">Недавно смотрели</div>
@@ -565,7 +576,7 @@ nav .npill{position:absolute;top:5px;right:calc(50% - 24px);
   </div>
   <div class="icard">
     <h3>🛍 О магазине</h3>
-    <p>Libirny Shop — небольшой магазин с каталогом 18+. Все заказы оформляются через Telegram-бота: собрал корзину, нажал одну кнопку — заявка уже у нас.</p>
+    <p>Libirny Shop — небольшой магазин с каталогом 18+. Выбери свою улицу, собери корзину и оформи заказ — заявка уйдёт нам в бота.</p>
   </div>
   <div class="icard">
     <h3>🚚 Доставка и оплата</h3>
@@ -665,7 +676,8 @@ function save(k,v){ try{ localStorage.setItem(tstore()+'_'+k, JSON.stringify(v))
 function load(k,def){ try{ const s = localStorage.getItem(tstore()+'_'+k); return s?JSON.parse(s):def; }catch(e){ return def; } }
 
 /* ============ СОСТОЯНИЕ ============ */
-let ITEMS = [], cart = load('cart',{}), favs = load('favs',[]);
+let ITEMS = [], STREETS = [], curStreet = null;
+let cart = load('cart',{}), favs = load('favs',[]);
 let recent = load('recent',[]), orders = load('orders',[]), ratings = load('ratings',{});
 let curCat = 'Все', curSort = 'new', shItem = null, shCount = 1;
 const FREE_SHIP = 3000;
@@ -775,7 +787,13 @@ async function loadProducts(){
     ITEMS = await r.json();
     if(!Array.isArray(ITEMS)) ITEMS = [];
   }catch(e){ ITEMS = []; }
-  renderChips(); renderList(); renderRecent(); renderOrders(); renderHit(); animateStats();
+  try{
+    const rs = await fetch('streets.json?t='+Date.now());
+    STREETS = await rs.json();
+    if(!Array.isArray(STREETS)) STREETS = [];
+  }catch(e){ STREETS = []; }
+  if(curStreet && !STREETS.includes(curStreet)) curStreet = null;
+  renderStreets(); renderChips(); renderList(); renderRecent(); renderOrders(); renderHit(); animateStats();
 }
 function animateStats(){
   animNum('st-cnt',ITEMS.length);
@@ -785,6 +803,21 @@ function animNum(id,target){
   const el = document.getElementById(id);
   let n = 0; const step = Math.max(1,Math.round(target/22));
   const t = setInterval(()=>{ n = Math.min(target,n+step); el.textContent = n; if(n>=target) clearInterval(t); },38);
+}
+
+/* ============ УЛИЦЫ ============ */
+function renderStreets(){
+  const w = document.getElementById('streets-wrap');
+  if(!STREETS.length){ w.innerHTML=''; return; }
+  w.innerHTML = '<div class="rv-title">📍 Улицы</div><div class="streets">'+STREETS.map(s=>{
+    const n = ITEMS.filter(i=>i.street===s).length;
+    return `<div class="scard ${curStreet===s?'on':''}" onclick="pickStreet('${s.replace(/'/g,"\\'")}')"><span class="ic">📍</span><b>${s}</b><small>${n} товаров</small></div>`;
+  }).join('')+'</div>';
+}
+function pickStreet(s){
+  curStreet = (curStreet===s)?null:s; haptic();
+  renderStreets(); renderChips(); renderList();
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
 /* ============ ХИТ ПРОДАЖ ============ */
@@ -806,7 +839,7 @@ function renderHit(){
 
 /* ============ КАТЕГОРИИ / СОРТИРОВКА / ПОИСК ============ */
 function renderChips(){
-  const cats = ['Все',...new Set(ITEMS.map(i=>i.cat).filter(Boolean))];
+  const cats = ['Все',...new Set(ITEMS.filter(i=>!curStreet||i.street===curStreet).map(i=>i.cat).filter(Boolean))];
   document.getElementById('chips').innerHTML = cats.map(c =>
     `<div class="chip ${c===curCat?'on':''}" onclick="setCat('${c.replace(/'/g,"\\'")}')">${c}</div>`).join('');
 }
@@ -823,7 +856,7 @@ function clearSearch(){ document.getElementById('q').value=''; onSearch(); }
 function filtered(){
   const q = (document.getElementById('q').value||'').toLowerCase().trim();
   let list = ITEMS.filter(i =>
-    (curCat==='Все'||i.cat===curCat) && (!q || String(i.name).toLowerCase().includes(q))
+    (!curStreet || i.street===curStreet) && (curCat==='Все'||i.cat===curCat) && (!q || String(i.name).toLowerCase().includes(q))
   );
   if(curSort==='asc') list = list.slice().sort((a,b)=>a.price-b.price);
   if(curSort==='desc') list = list.slice().sort((a,b)=>b.price-a.price);
@@ -929,12 +962,12 @@ function openSheet(code){
   shItem = i; shCount = cart[code]||1;
   pushRecent(code);
   document.getElementById('sh-img').innerHTML = i.img ? `<img src="${i.img}">` : '<div class="noimg" style="height:100%">🛍️</div>';
-  document.getElementById('sh-cat').textContent = i.cat||'';
+  document.getElementById('sh-cat').textContent = (i.cat||'')+' · 📍 '+(i.street||'—');
   document.getElementById('sh-name').textContent = i.name;
   document.getElementById('sh-price').innerHTML =
     (i.old_price&&i.old_price>i.price?'<span class="oldp" style="font-size:15px">'+fmt(i.old_price)+' ₽</span> ':'')
     + fmt(i.price)+' <small>₽</small>';
-  document.getElementById('sh-per').textContent = i.desc ? i.desc : 'Категория: '+(i.cat||'—')+' · оформление через бота';
+  document.getElementById('sh-per').textContent = i.desc ? i.desc : 'Улица: '+(i.street||'—')+' · оформление через бота';
   updSh(); updShFav(); renderStarsBig();
   document.getElementById('ovl').classList.add('on');
   document.getElementById('sheet').classList.add('on');
@@ -1039,7 +1072,12 @@ function renderCart(){
       <div class="sum">${fmt(i.price*cart[code])} ₽</div></div>`;
   }).join('');
   el.innerHTML = shipBarHTML() + rows +
-    `<h2 class="sec">Контакты</h2>
+    `<h2 class="sec">Доставка</h2>
+    <select id="f-street" class="f" style="appearance:none">
+      <option value="—">📍 Выбери улицу доставки</option>
+      ${STREETS.map(s=>`<option value="${s}" ${curStreet===s?'selected':''}>📍 ${s}</option>`).join('')}
+    </select>
+    <h2 class="sec">Контакты</h2>
     <input class="f" id="f-name" placeholder="Твоё имя" value="${load('fname','')}">
     <input class="f" id="f-phone" placeholder="Телефон или @username" value="${load('fphone','')}">
     <textarea class="f" id="f-note" rows="2" placeholder="Комментарий к заказу (необязательно)"></textarea>
@@ -1056,6 +1094,9 @@ function renderCart(){
 /* ============ ЗАКАЗ ============ */
 function submitOrder(){
   if(!tg || !tg.sendData){ toast('Открой магазин через кнопку бота 🙂'); return; }
+  const streetSel = document.getElementById('f-street');
+  const street = streetSel ? streetSel.value : '—';
+  if(street==='—'){ toast('Выбери улицу доставки 📍'); haptic('warn'); return; }
   const name = document.getElementById('f-name').value.trim();
   const phone = document.getElementById('f-phone').value.trim();
   const note = (document.getElementById('f-note')||{value:''}).value.trim();
@@ -1071,7 +1112,7 @@ function submitOrder(){
   orders = orders.slice(0,20);
   save('orders',orders); renderOrders();
   haptic('ok');
-  const payload = { type:'order', name, phone, items, total };
+  const payload = { type:'order', name, phone, items, total, street };
   if(note) payload.note = note;
   tg.sendData(JSON.stringify(payload));
 }
