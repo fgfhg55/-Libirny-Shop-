@@ -61,5 +61,12 @@
   "user_id": 7104234275,
   "used": false,
   "created": "2026-11-26 16:37"
+ },
+ "LIB-IE2G9H": {
+  "id": "discount5",
+  "percent": 5,
+  "user_id": 7104234275,
+  "used": false,
+  "created": "2026-11-26 16:38"
  }
 }
