@@ -5,5 +5,12 @@
   "user_id": 7104234275,
   "used": true,
   "created": "2026-11-26 16:30"
+ },
+ "LIB-AIF5TV": {
+  "id": "discount5",
+  "percent": 5,
+  "user_id": 7104234275,
+  "used": false,
+  "created": "2026-11-26 16:31"
  }
 }
