@@ -112,7 +112,7 @@ header{position:sticky;top:0;z-index:30;padding:calc(12px + env(safe-area-inset-
 .rl-res.show{display:block;animation:vin .35s ease}
 .rl-res .t{font-size:18px;font-weight:900;margin-bottom:7px}
 .rl-res .d{font-size:12.5px;color:var(--muted);line-height:1.6}
-.rl-promo{margin-top:10px;font-size:15px;font-weight:900;letter-spacing:2px;color:#ffd166;background:rgba(255,209,102,.1);border:1.5px dashed rgba(255,209,102,.5);border-radius:14px;padding:10px;display:none}
+.rl-promo{margin-top:10px;font-size:13px;font-weight:800;color:#ffd166;background:rgba(255,209,102,.1);border:1.5px dashed rgba(255,209,102,.5);border-radius:14px;padding:10px;display:none}
 .rl-promo.show{display:block}
 .leg{padding:2px 2px}
 .leg div{display:flex;align-items:center;gap:9px;padding:8px 0;font-size:12.5px;font-weight:700;border-bottom:1px solid var(--line)}
@@ -206,7 +206,6 @@ nav .npill{position:absolute;top:4px;right:calc(50% - 21px);background:var(--dan
 .order-card .l b{font-size:12.5px;display:block}
 .order-card .l small{color:var(--muted);font-size:10.5px}
 .order-card .s{font-weight:800;color:var(--acc);font-size:13.5px}
-/* админ-панель */
 .upd-banner{margin:12px 14px;padding:20px;border-radius:22px;border:1.5px solid var(--acc);background:linear-gradient(125deg,rgba(168,85,247,.22),rgba(217,70,239,.15),rgba(34,211,238,.13));box-shadow:0 0 34px var(--glow)}
 .upd-banner .v{font-size:10px;font-weight:800;letter-spacing:2px;color:var(--acc2);text-transform:uppercase}
 .upd-banner h2{font-size:19px;font-weight:900;margin:7px 0 8px}
@@ -252,7 +251,7 @@ nav .npill{position:absolute;top:4px;right:calc(50% - 21px);background:var(--dan
     <div class="kick">Libirny Shop · 2026</div>
     <h2 id="hero-title">Новые позиции<br><span>уже здесь</span></h2>
     <p>Выбирай точку и вкус. Крути рулетку — за каждую жижу 2 прокрутки 🎰</p>
-    <div class="htags"><div class="htag">🎯 Вкусы по точкам</div><div class="htag">🎰 Рулетка</div><div class="htag">🎟 Промокоды</div></div>
+    <div class="htags"><div class="htag">🎯 Вкусы по точкам</div><div class="htag">🎰 Рулетка</div><div class="htag">🎟 Скидки до 10%</div></div>
     <div class="stats">
       <div class="stat"><b id="st-cnt">0</b><span>товаров</span></div>
       <div class="stat"><b id="st-cats">0</b><span>категорий</span></div>
@@ -283,7 +282,7 @@ nav .npill{position:absolute;top:4px;right:calc(50% - 21px);background:var(--dan
 <section class="view" id="v-rl">
   <div class="rl-wrap">
     <div class="rl-title">🎰 Рулетка удачи</div>
-    <div class="rl-sub">Самый редкий приз — бесплатная жижа. Прокрутки за жижи в заказах!</div>
+    <div class="rl-sub">Самый редкий приз — бесплатная жижа: шанс 0,00000001%. Прокрутки за жижи в заказах!</div>
     <div class="rl-box">
       <div class="rlp">▼</div>
       <div class="wheel" id="wheel"></div>
@@ -322,7 +321,7 @@ nav .npill{position:absolute;top:4px;right:calc(50% - 21px);background:var(--dan
       <li>Доставка от точки, где лежит товар: Российская 24 — бесплатно, Чоппа дом 2 — 10–100 ₽.</li>
       <li>Самовывоз только с точки, где реально есть твой заказ.</li>
       <li>Бесплатная доставка от 3000 ₽.</li>
-      <li>🎰 За каждую жижу — 2 прокрутки рулетки. Скидки выдаются одноразовыми промокодами — вводи их в корзине.</li>
+      <li>🎰 За каждую жижу — 2 прокрутки рулетки. Скидки применяются в корзине автоматически, одноразово.</li>
       <li>Оплата обсуждается лично при подтверждении заказа.</li>
     </ul>
   </div>
@@ -408,21 +407,17 @@ let shItem=null, shCount=1, shFlavor=null, shStreet=null;
 const FREE_SHIP=3000;
 
 const FALLBACK_PRIZES={spins_per_juice:2,prizes:[
- {id:'free_delivery',title:'🚚 Бесплатная доставка',weight:50,color:'#22d3ee'},
- {id:'discount3',title:'🎟 Скидка 3%',weight:8,color:'#7dd3fc'},
- {id:'discount5',title:'🎟 Скидка 5%',weight:12,color:'#38bdf8'},
- {id:'discount10',title:'🎟 Скидка 10%',weight:10,color:'#a855f7'},
- {id:'discount15',title:'🎟 Скидка 15%',weight:5,color:'#d946ef'},
- {id:'gift_pod',title:'🎁 Жижа в подарок',weight:7,color:'#f472b6'},
- {id:'pod_disc20',title:'💨 −20% на подики',weight:5,color:'#fb923c'},
- {id:'juice_second50',title:'💧 2-я жижа −50%',weight:1,color:'#c084fc'},
- {id:'juice_third3',title:'💧 3-я жижа бесплатно',weight:0.1,color:'#e879f9'},
- {id:'try_again',title:'💨 Мимо',weight:1.9,color:'#4b5563'},
- {id:'free_juice',title:'🎰 БЕСПЛАТНАЯ ЖИЖА',weight:0.0001,color:'#ffd166'}
+ {id:'free_delivery',title:'🚚 Бесплатная доставка',weight:40,color:'#22d3ee'},
+ {id:'discount3',title:'🎟 Скидка 3%',weight:15,color:'#7dd3fc'},
+ {id:'discount5',title:'🎟 Скидка 5%',weight:18,color:'#38bdf8'},
+ {id:'discount10',title:'🎟 Скидка 10%',weight:8,color:'#a855f7'},
+ {id:'gift_pod',title:'🎁 Жижа в подарок с подиком',weight:9,color:'#f472b6'},
+ {id:'try_again',title:'💨 Мимо',weight:10,color:'#4b5563'},
+ {id:'free_juice',title:'🎰 Жижа бесплатно',weight:0.00000001,color:'#ffd166'}
 ]};
 
 let PRIZES=FALLBACK_PRIZES, SPINS=0, wheelRot=0, spinning=false;
-let spinsUsed=load('spins_used',[]), coupon=load('coupon',null), myPromo=null;
+let coupon=load('coupon',null);
 
 let orderType='delivery', deliveryCost=null, deliveryKm=null, deliveryShop=null, pickupShop=null;
 const SHOPS=[
@@ -433,8 +428,8 @@ const SHOPS=[
 /* ============ АДМИН-ПАНЕЛЬ ============ */
 const ADMIN_LOGIN='Сергей 2.0', ADMIN_PASS='122665098';
 const UPDATES=[
- {v:'1.3',date:'26.11.2026',t:'Админ-панель на сайте: статистика посещений и действий, журнал активности, смена цен. Рулетка: 11 призов, самый редкий — бесплатная жижа (0.0001%).'},
- {v:'1.2',date:'25.11.2026',t:'Одноразовые промокоды из рулетки (LIB-XXXXXX), прокрутки за жижи в заказах, поле промокода в корзине.'},
+ {v:'1.3',date:'26.11.2026',t:'Админ-панель на сайте: статистика посещений и действий, журнал активности, смена цен. Прокрутки больше не пропадают — счётчик живёт на устройстве. Рулетка: 7 призов, максимальная скидка 10%, джекпот — жижа бесплатно (0.00000001%).'},
+ {v:'1.2',date:'25.11.2026',t:'Прокрутки за жижи в заказах, скидки применяются в корзине автоматически.'},
  {v:'1.1',date:'24.11.2026',t:'Корзина, расчёт доставки по адресу через геокодер, самовывоз с точки наличия, избранное и «недавно смотрели».'},
  {v:'1.0',date:'23.11.2026',t:'Первый запуск витрины: каталог, вкусы по точкам, заказ через бота.'}
 ];
@@ -503,7 +498,6 @@ function renderAdmin(){
   log.forEach(e=>{ users[e.user]=(users[e.user]||0)+1; });
   const topU=Object.entries(users).sort((a,b)=>b[1]-a[1]).slice(0,8);
   const recent=log.slice(-40).reverse();
-  const po=load('price_over',{});
   const upd=UPDATES.map(u=>'<tr><td><b style="color:var(--acc2)">Обнова '+u.v+'</b><br><span class="tm">'+u.date+'</span><br>'+u.t+'</td></tr>').join('');
   const kpi='<div class="kpi">'+
     '<div><b>'+visits+'</b><small>заходов</small></div>'+
@@ -627,27 +621,14 @@ async function loadRoulette(){
     const r=await fetch('prizes.json?t='+Date.now()); const j=await r.json();
     if(j&&Array.isArray(j.prizes)&&j.prizes.length) PRIZES=j;
   }catch(e){}
-  const uid=userId();
-  let server=0;
-  try{
-    const rs=await fetch('spins.json?t='+Date.now()); const sj=await rs.json();
-    server=uid?(sj[String(uid)]||0):0;
-  }catch(e){}
-  myPromo=null;
-  try{
-    const rp=await fetch('promocodes.json?t='+Date.now()); const pc=await rp.json();
-    if(pc&&typeof pc==='object'&&uid){
-      const mine=Object.keys(pc).filter(c=>pc[c]&&pc[c].user_id===uid&&!pc[c].used);
-      if(mine.length){
-        const d=pc[mine[0]];
-        myPromo={code:mine[0],percent:d.percent||10,id:d.id||'discount10'};
-        toast('🎟 Твой промокод: '+mine[0]+' — скидка '+d.percent+'%');
-      }
-    }
-  }catch(e){}
-  SPINS=Math.max(0,server-spinsUsed.length);
+  SPINS=load('spins_total',0);
   const pending=load('pending_spins',0);
-  if(pending>0){ save('pending_spins',0); SPINS+=pending; renderSpinsUI(); setTimeout(()=>toast('🎰 За заказ начислено '+pending+' прокруток!'),800); }
+  if(pending>0){
+    save('pending_spins',0);
+    SPINS+=pending; save('spins_total',SPINS);
+    renderSpinsUI();
+    setTimeout(()=>toast('🎰 За заказ начислено '+pending+' прокруток!'),800);
+  }
 }
 
 function buildWheel(){
@@ -672,12 +653,10 @@ function renderSpinsUI(){
 function prizeDesc(p){
   if(!p) return '';
   if(p.id==='free_delivery') return 'Доставка бесплатная — применится в корзине автоматически.';
-  if(p.id==='discount3'||p.id==='discount5'||p.id==='discount10'||p.id==='discount15'||p.id==='pod_disc20')
-    return 'Одноразовый промокод выслан ботом — введи его в корзине (поле «Промокод»).';
-  if(p.id==='gift_pod') return 'Возьми любой подик — жижа в подарок! Вкус уточни у менеджера.';
-  if(p.id==='juice_second50') return 'Скажи менеджеру — вторая жижа со скидкой 50%.';
-  if(p.id==='juice_third3') return 'При заказе от 3 жиж — третья бесплатно (шанс был 0.1%!).';
-  if(p.id==='free_juice') return '🎉 ДЖЕКПОТ! Любая жижа бесплатно — покажи этот приз менеджеру.';
+  if(p.id==='discount3'||p.id==='discount5'||p.id==='discount10')
+    return 'Скидка уже применена в корзине. Одноразовая!';
+  if(p.id==='gift_pod') return 'Возьми любой подик — жижа в подарок! Скажи менеджеру.';
+  if(p.id==='free_juice') return '🎉 ДЖЕКПОТ! Шанс был 1 к 10 миллиардам! Покажи этот приз менеджеру — любая жижа бесплатно.';
   return 'Не повезло. Закажи жижу — и крути снова!';
 }
 function doSpin(){
@@ -695,22 +674,22 @@ function doSpin(){
   setTimeout(()=>{
     spinning=false;
     SPINS--;
-    spinsUsed.push({id:pick.id,title:pick.title});
-    save('spins_used',spinsUsed);
+    save('spins_total',SPINS);
     renderSpinsUI();
     if(pick.id==='free_delivery'){ coupon={id:'free_delivery',title:pick.title}; save('coupon',coupon); }
-    document.getElementById('rr-t').textContent=pick.title;
-    document.getElementById('rr-d').textContent=prizeDesc(pick);
-    if(pick.id==='discount3'||pick.id==='discount5'||pick.id==='discount10'||pick.id==='discount15'||pick.id==='pod_disc20'){
+    if(pick.id==='discount3'||pick.id==='discount5'||pick.id==='discount10'){
+      const pct=pick.id==='discount3'?3:pick.id==='discount5'?5:10;
+      coupon={id:pick.id,percent:pct,title:pick.title}; save('coupon',coupon);
       const el=document.getElementById('rr-promo');
-      el.textContent='🎟 Промокод выслан ботом — открой чат с ботом!';
+      el.textContent='🎟 Скидка '+pct+'% применена в корзине автоматически!';
       el.classList.add('show');
     }
+    document.getElementById('rr-t').textContent=pick.title;
+    document.getElementById('rr-d').textContent=prizeDesc(pick);
     document.getElementById('rl-res').classList.add('show');
     track('spin',pick.title);
     haptic('ok');
     if(pick.id==='free_juice') confetti();
-    if(tg&&tg.sendData) tg.sendData(JSON.stringify({type:'spin',prize:pick.id,prize_title:pick.title}));
   },4700);
 }
 
@@ -781,7 +760,7 @@ function cardHTML(i){
     '<button class="fav '+(isFav?'onx':'')+'" onclick="event.stopPropagation();toggleFav(\''+i.code+'\')">'+(isFav?'💛':'🤍')+'</button></div>'+
     '<div class="pb"><div class="pcat">'+(i.cat||'')+'</div><div class="pn">'+i.name+'</div>'+
     '<div class="pts">📍 '+pts+'</div>'+fl+
-    '<div class="prow"><div class="ppr">'+old+fmt(i.price)+' <small>₽</small></div>'+btn+'</div></div></div></div>';
+    '<div class="prow"><div class="ppr">'+old+fmt(itemPrice(i))+' <small>₽</small></div>'+btn+'</div></div></div></div>';
 }
 function renderList(){
   const list=filtered(), el=document.getElementById('list');
@@ -831,7 +810,7 @@ function openSheet(code){
   document.getElementById('sh-cat').textContent=(i.cat||'')+' · 📍 '+sts.join(' · ');
   document.getElementById('sh-name').textContent=i.name;
   document.getElementById('sh-price').innerHTML=
-    (i.old_price&&i.old_price>i.price?'<span class="oldp">'+fmt(i.old_price)+' ₽</span> ':'')+fmt(i.price)+' <small>₽</small>';
+    (i.old_price&&i.old_price>i.price?'<span class="oldp">'+fmt(i.old_price)+' ₽</span> ':'')+fmt(itemPrice(i))+' <small>₽</small>';
   document.getElementById('sh-per').textContent='Точки: '+sts.join(', ')+' · оформление через бота';
   renderFlavorChips(); updSh(); updShFav();
   document.getElementById('ovl').classList.add('on');
@@ -872,7 +851,7 @@ function updSh(){
   document.getElementById('sh-q').textContent=shCount;
   const btn=document.getElementById('sh-add');
   if(hasFlavors(shItem)&&!shFlavor) btn.textContent='Выбери вкус 🎯';
-  else btn.textContent='Добавить · '+fmt(shItem.price*shCount)+' ₽';
+  else btn.textContent='Добавить · '+fmt(itemPrice(shItem)*shCount)+' ₽';
 }
 function shQty(d){ shCount=Math.max(1,shCount+d); updSh(); haptic(); }
 function shAdd(){
@@ -927,8 +906,7 @@ function cartEntries(){
 function codeQty(code){ return cartEntries().filter(e=>e.code===code).reduce((a,e)=>a+e.q,0); }
 function itemPrice(i){
   let price=i.price;
-  if(myPromo&&myPromo.id==='pod_disc20'&&isPod(i)) price=Math.round(i.price*(1-myPromo.percent/100));
-  else if(myPromo&&myPromo.id.indexOf('discount')===0&&isJuice(i)) price=Math.round(i.price*(1-myPromo.percent/100));
+  if(coupon&&coupon.percent) price=Math.round(price*(1-coupon.percent/100));
   return price;
 }
 function cartTotal(){ return cartEntries().reduce((a,e)=>{ const i=ITEMS.find(x=>x.code===e.code); return a+(i?itemPrice(i)*e.q:0); },0); }
@@ -1060,14 +1038,10 @@ function renderCart(){
       '<button onclick="changeQty(\''+key+'\',1)">+</button></div>'+
       '<div class="sum">'+fmt(itemPrice(i)*e.q)+' ₽</div></div>';
   }).join('');
-  let promoHTML='';
-  if(myPromo){
-    promoHTML='<div class="coupon">🎟 Активен промокод <b>'+myPromo.code+'</b> — скидка '+myPromo.percent+'%'+
-      (myPromo.id==='pod_disc20'?' на подики':' на жижки')+', уже в ценах выше. Одноразовый.</div>';
-  }
   let couponHTML='';
   if(coupon){
     couponHTML='<div class="coupon">🎰 Активен приз: '+coupon.title+
+      (coupon.percent?' — скидка '+coupon.percent+'% уже в ценах. Одноразовый.':'')+
       ' <span style="cursor:pointer;opacity:.7" onclick="coupon=null;save(\'coupon\',coupon);renderCart()">✕</span></div>';
   }
   const addrBlock=orderType==='delivery'
@@ -1075,9 +1049,7 @@ function renderCart(){
      '<div class="shipbar"><div class="t">🚚 Доставка: <b id="dev-value">укажи адрес</b></div>'+
      '<div style="font-size:10.5px;color:var(--muted);margin-top:5px">Считается от точки, где лежит товар</div></div>'
     :pickupBlock();
-  el.innerHTML=shipBarHTML()+rows+promoHTML+couponHTML+
-    '<h2 class="sec">Промокод</h2>'+
-    '<input class="f" id="f-promo" placeholder="🎟 Введи промокод (необязательно)" value="'+(load('promo_input','')||'')+'" oninput="save(\'promo_input\',this.value)">'+
+  el.innerHTML=shipBarHTML()+rows+couponHTML+
     '<h2 class="sec">Получение</h2>'+
     '<div style="display:flex;gap:8px;margin-bottom:12px">'+
     '<button style="flex:1;padding:13px;border-radius:15px;cursor:pointer;border:1.5px solid '+(orderType==='delivery'?'var(--acc)':'var(--line)')+';background:'+(orderType==='delivery'?'var(--soft)':'var(--glass)')+';color:var(--text);font-weight:700;font-size:13px" onclick="setOrderType(\'delivery\')">🚚 Доставка</button>'+
@@ -1106,9 +1078,8 @@ function submitOrder(){
   const name=(document.getElementById('f-name')||{value:''}).value.trim();
   const phone=(document.getElementById('f-phone')||{value:''}).value.trim();
   const note=(document.getElementById('f-note')||{value:''}).value.trim();
-  const promoIn=(document.getElementById('f-promo')||{value:''}).value.trim().toUpperCase();
   if(!name||!phone){ toast('Заполни имя и контакт'); haptic('warn'); return; }
-  save('fname',name); save('fphone',phone); save('faddress',address); save('flavor',note); save('promo_input',promoIn);
+  save('fname',name); save('fphone',phone); save('faddress',address); save('flavor',note);
   const items=cartEntries().filter(e=>ITEMS.some(x=>x.code===e.code)).map(e=>{
     const i=ITEMS.find(x=>x.code===e.code);
     return {code:e.code,name:i.name,price:itemPrice(i),qty:e.q,
@@ -1123,9 +1094,7 @@ function submitOrder(){
     order:isPickup?('самовывоз · '+pickupShop):'доставка',
     shop:deliveryShop?deliveryShop.name:null,
     km:isPickup?null:deliveryKm,
-    promo:promoIn||null,
     applied_prize:(coupon&&coupon.id==='free_delivery')?{id:coupon.id,title:coupon.title}:null,
-    prizes_used:spinsUsed,
     spins_expected:juiceQty*per};
   if(note) payload.flavor=note;
   orders.push({count:items.reduce((a,x)=>a+x.qty,0),total:total+delivery,date:new Date().toLocaleString('ru-RU')});
@@ -1133,7 +1102,6 @@ function submitOrder(){
   track('order',fmt(total+delivery)+' ₽');
   const gained=juiceQty*per;
   save('pending_spins',gained);
-  spinsUsed=[]; save('spins_used',spinsUsed);
   coupon=null; save('coupon',coupon);
   tg.sendData(JSON.stringify(payload));
 }
@@ -1146,7 +1114,7 @@ function renderOrders(){
 }
 function showDone(total,spinsAdded){
   cart={}; save('cart',cart);
-  if(spinsAdded){ SPINS+=spinsAdded; renderSpinsUI(); }
+  if(spinsAdded){ SPINS+=spinsAdded; save('spins_total',SPINS); renderSpinsUI(); }
   document.getElementById('done-total').textContent=fmt(total)+' ₽';
   document.getElementById('done-spins').textContent=spinsAdded
     ?('🎰 Начислено прокруток: '+spinsAdded+'! Крути рулетку!')
@@ -1199,4 +1167,6 @@ initShops().catch(()=>{});
 renderBadge();
 </script>
 </body>
+</html>
+
 </html>
