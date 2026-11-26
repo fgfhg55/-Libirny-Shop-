@@ -1013,4 +1013,66 @@ function renderOrders(){
   const box=document.getElementById('orders-box');
   if(!orders.length){ box.innerHTML='<p>Заказов пока не было. Оформи первый — он появится здесь 📜</p>'; return; }
   box.innerHTML=orders.map(o=>
-    '<div class="order-card"><div class="
+   '<div class="order-card"><div class="l"><b>'+o.count+' поз. · '+o.total+' ₽</b><small>'+o.date+'</small></div>'+
+    '<div class="s">отправлен</div></div>').join('');
+}
+
+let toastTimer;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function confetti(){
+  const colors=['#a855f7','#d946ef','#22d3ee','#ffd166','#ff5c8a'];
+  for(let i=0;i<50;i++){
+    const c=document.createElement('div');
+    c.className='conf';
+    c.style.left=Math.random()*100+'vw';
+    c.style.background=colors[i%colors.length];
+    c.style.animationDuration=(Math.random()*1.8+1.5)+'s';
+    c.style.animationDelay=(Math.random()*.5)+'s';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),4000);
+  }
+}
+
+function go(p){
+  ['cat','rl','cart','info','done'].forEach(id=>{
+    const v=document.getElementById('v-'+id);
+    if(v) v.classList.toggle('on',id===p);
+  });
+  ['cat','rl','cart','info'].forEach(id=>{
+    const n=document.getElementById('n-'+id);
+    if(n) n.classList.toggle('on',id===p);
+  });
+  window.scrollTo(0,0);
+  if(p==='cart') renderCart();
+}
+
+window.addEventListener('message',function(e){
+  try{
+    const d=typeof e.data==='string'?JSON.parse(e.data):e.data;
+    if(d&&d.type==='order_saved') showDone(d.total||0,d.spins||0);
+  }catch(err){}
+});
+
+function showDone(total,spinsAdded){
+  cart={}; save('cart',cart);
+  spinsUsed=[]; save('spins_used',spinsUsed);
+  coupon=null; save('coupon',coupon);
+  document.getElementById('done-total').textContent=fmt(total)+' ₽';
+  document.getElementById('done-spins').textContent=spinsAdded
+    ?('🎰 Начислено прокруток: '+spinsAdded+'! Крути рулетку!')
+    :'Мы уже получили заявку и скоро свяжемся с тобой.';
+  go('done'); confetti();
+}
+
+loadProducts().catch(()=>{});
+initShops().catch(()=>{});
+renderBadge();
+</script>
+</body>
+</html>
