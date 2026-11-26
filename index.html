@@ -136,7 +136,6 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
 .stat b{font-family:'Unbounded',sans-serif;font-size:17px;color:var(--acc);display:block}
 .stat span{font-size:10.5px;color:var(--muted);font-weight:600}
 
-/* Хит продаж: только фото */
 .hit{margin:16px 16px 0;border-radius:30px;overflow:hidden;position:relative;cursor:pointer;
   border:1px solid var(--line);height:240px;display:block}
 .hit img{width:100%;height:100%;object-fit:cover;display:block}
@@ -279,6 +278,13 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
 .sh-price{font-size:27px;font-weight:900;color:var(--acc)}
 .sh-price small{font-size:13px;color:var(--muted);font-weight:600}
 .sh-per{font-size:12.5px;color:var(--muted);margin-top:6px;line-height:1.6}
+.flav-row{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px}
+.flav-chip{padding:10px 16px;border-radius:18px;font-size:12.5px;font-weight:700;cursor:pointer;
+  background:var(--glass);border:1.5px solid var(--line);color:var(--text);
+  transition:all .25s cubic-bezier(.2,1.4,.4,1)}
+.flav-chip.on{border-color:var(--acc);background:var(--acc-soft);
+  box-shadow:0 0 0 3px var(--acc-soft);color:var(--acc)}
+.flav-chip small{display:block;font-size:10px;color:var(--muted);font-weight:600;margin-top:2px}
 .sh-rev{margin:16px 0 4px;padding:14px 16px;border-radius:18px;
   background:rgba(255,255,255,.04);border:1px solid var(--line)}
 .sh-rev .t{font-size:12px;font-weight:800;margin-bottom:8px}
@@ -478,10 +484,10 @@ nav .npill{position:absolute;top:5px;right:calc(50% - 24px);
   <div class="hero">
     <div class="kick">Libirny Shop · 2026</div>
     <h2 id="hero-title">Новые позиции<br><span>уже здесь</span></h2>
-    <p>Собирай корзину и оформляй заказ — всё в пару касаний.</p>
+    <p>Выбирай вкус, собирай корзину — заявка уйдёт нам в бота.</p>
     <div class="hero-tags">
+      <div class="htag">🎯 Вкусы в наличии</div>
       <div class="htag">⚡ Доставка</div>
-      <div class="htag">🔒 Безопасно</div>
       <div class="htag">💬 Поддержка</div>
     </div>
     <div class="stats">
@@ -538,7 +544,7 @@ nav .npill{position:absolute;top:5px;right:calc(50% - 24px);
   </div>
   <div class="icard">
     <h3>🛍 О магазине</h3>
-    <p>Libirny Shop — небольшой магазин с каталогом 18+. Две точки: Российская 24 и Чоппа дом 2. У каждой точки свои товары. Собери корзину и оформи заказ — заявка уйдёт нам в бота.</p>
+    <p>Libirny Shop — небольшой магазин с каталогом 18+. Две точки: Российская 24 и Чоппа дом 2. Выбирай вкус — если он в наличии, он есть в карточке; распродали — он сам исчезает из каталога.</p>
   </div>
   <div class="icard">
     <h3>🚚 Доставка и оплата</h3>
@@ -590,6 +596,7 @@ nav .npill{position:absolute;top:5px;right:calc(50% - 24px);
     <div class="sh-name" id="sh-name"></div>
     <div class="sh-price" id="sh-price"></div>
     <div class="sh-per" id="sh-per"></div>
+    <div id="sh-flavors"></div>
     <div class="sh-rev">
       <div class="t">Твоя оценка</div>
       <div class="stars-big" id="stars-big"></div>
@@ -640,21 +647,28 @@ function load(k,def){ try{ const s = localStorage.getItem(tstore()+'_'+k); retur
 
 /* ============ СОСТОЯНИЕ ============ */
 let ITEMS = [], STREETS = [], curStreet = null;
-let cart = load('cart',{}), favs = load('favs',[]);
+let cart = load('cart',{});
+/* миграция старой корзины: числа → {q, f} */
+(function(){ for(const k in cart){ if(typeof cart[k]==='number') cart[k]={q:cart[k],f:null}; } })();
+let favs = load('favs',[]);
 let recent = load('recent',[]), orders = load('orders',[]), ratings = load('ratings',{});
-let curCat = 'Все', curSort = 'new', shItem = null, shCount = 1;
+let curCat = 'Все', curSort = 'new', shItem = null, shCount = 1, shFlavor = null;
 const FREE_SHIP = 3000;
 
 /* Доставка по расстоянию */
 let orderType = 'delivery';
 let deliveryCost = null, deliveryKm = null, deliveryShop = null;
 let pickupShop = null;
-/* Точки магазина: цены доставки у каждой точки свои.
-   Российская 24 — бесплатно (0–0), Чоппа дом 2 — дороже (10–100) */
 const SHOPS = [
   {name: 'Российская 24', addr: 'Российская, 24, Челябинск', lat: null, lon: null, min: 0, max: 0},
   {name: 'Чоппа дом 2',   addr: 'Чоппа, 2, Челябинск',       lat: null, lon: null, min: 10, max: 100}
 ];
+
+/* ============ ВКУСЫ ============ */
+function hasFlavors(p){ return !!(p.flavors && p.flavors.length); }
+function liveFlavors(p){ return hasFlavors(p) ? p.flavors.filter(f=>(f.qty||0)>0) : []; }
+function inStock(p){ return !hasFlavors(p) || liveFlavors(p).length>0; }
+function flavorStock(p, fl){ const f=(p.flavors||[]).find(x=>x.name===fl); return f?(f.qty||0):0; }
 
 /* ============ ТЕМЫ ============ */
 let curTheme = load('theme','violet');
@@ -723,17 +737,30 @@ async function loadProducts(){
   ).join('');
   try{
     const r = await fetch('products.json?t='+Date.now());
-    ITEMS = await r.json();
-    if(!Array.isArray(ITEMS)) ITEMS = [];
+    let raw = await r.json();
+    if(!Array.isArray(raw)) raw = [];
+    /* распроданные вкусы пропадают целиком с витрины */
+    ITEMS = raw.filter(inStock);
+    /* чистим корзину от закончившихся вкусов и исчезнувших товаров */
+    let changed = false;
+    for(const k of Object.keys(cart)){
+      const i = k.indexOf('|');
+      const code = k.slice(0,i), fl = k.slice(i+1)||null;
+      const p = raw.find(x=>x.code===code);
+      if(!p || (hasFlavors(p) && (flavorStock(p,fl)<=0 || !p.flavors.some(x=>x.name===fl)))){
+        delete cart[k]; changed = true;
+      }
+    }
+    if(changed) save('cart',cart);
   }catch(e){ ITEMS = []; }
   try{
     const rs = await fetch('streets.json?t='+Date.now());
-    let raw = await rs.json();
-    if(!Array.isArray(raw)) raw = [];
-    STREETS = raw.map(s => typeof s==='string' ? {name:s} : {name:s.name});
+    let raw2 = await rs.json();
+    if(!Array.isArray(raw2)) raw2 = [];
+    STREETS = raw2.map(s => typeof s==='string' ? {name:s} : {name:s.name});
   }catch(e){ STREETS = []; }
   if(curStreet && !STREETS.some(s=>s.name===curStreet)) curStreet = null;
-  renderStreets(); renderChips(); renderList(); renderRecent(); renderOrders(); renderHit(); animateStats();
+  renderStreets(); renderChips(); renderList(); renderRecent(); renderOrders(); renderHit(); animateStats(); renderBadge();
 }
 function animateStats(){
   animNum('st-cnt',ITEMS.length);
@@ -807,10 +834,14 @@ function starsOf(code){
   return r ? '<span class="stars-mini">'+'★'.repeat(r)+'☆'.repeat(5-r)+'</span>' : '';
 }
 function cardHTML(i,n,inFav){
-  const cnt = cart[i.code]||0;
+  const cnt = codeQty(i.code);
   const isFav = inFav !== undefined ? inFav : favs.includes(i.code);
   const img = i.img ? `<img src="${i.img}" alt="" loading="lazy">` : '<div class="noimg">🛍️</div>';
   const old = i.old_price && i.old_price>i.price ? '<span class="oldp">'+fmt(i.old_price)+'</span>' : '';
+  const flHint = hasFlavors(i) ? `<small style="display:block;color:var(--muted);font-size:10.5px;margin-top:3px">🎯 ${liveFlavors(i).map(f=>f.name).join(' · ')}</small>` : '';
+  const addBtn = hasFlavors(i)
+    ? `<button class="add" id="add-${i.code}" onclick="event.stopPropagation();openSheet('${i.code}')">+</button>`
+    : `<button class="add" id="add-${i.code}" onclick="event.stopPropagation();addToCart('${i.code}')">+</button>`;
   return `<div class="card-wrap ${cnt?'on':''}">
     <div class="pcard" style="transition-delay:${Math.min(n*.04,300)}ms" onclick="openSheet('${i.code}')">
       ${cnt?`<div class="cnt">${cnt}</div>`:''}
@@ -821,9 +852,10 @@ function cardHTML(i,n,inFav){
       <div class="pbody">
         <div class="pcat">${i.cat||''} ${starsOf(i.code)}</div>
         <div class="pname">${i.name}</div>
+        ${flHint}
         <div class="prow">
           <div class="pprice">${old}${fmt(i.price)} <small>₽</small></div>
-          <button class="add" id="add-${i.code}" onclick="event.stopPropagation();addToCart('${i.code}')">+</button>
+          ${addBtn}
         </div>
       </div></div></div>`;
 }
@@ -892,7 +924,7 @@ function setRate(n){
 function openSheet(code){
   const i = ITEMS.find(x=>x.code===code);
   if(!i) return;
-  shItem = i; shCount = cart[code]||1;
+  shItem = i; shCount = 1; shFlavor = null;
   pushRecent(code);
   document.getElementById('sh-img').innerHTML = i.img ? `<img src="${i.img}">` : '<div class="noimg" style="height:100%">🛍️</div>';
   document.getElementById('sh-cat').textContent = (i.cat||'')+' · 📍 '+(i.street||'—');
@@ -901,10 +933,21 @@ function openSheet(code){
     (i.old_price&&i.old_price>i.price?'<span class="oldp" style="font-size:15px">'+fmt(i.old_price)+' ₽</span> ':'')
     + fmt(i.price)+' <small>₽</small>';
   document.getElementById('sh-per').textContent = i.desc ? i.desc : 'Точка: '+(i.street||'—')+' · оформление через бота';
-  updSh(); updShFav(); renderStarsBig();
+  renderFlavorChips(); updSh(); updShFav(); renderStarsBig();
   document.getElementById('ovl').classList.add('on');
   document.getElementById('sheet').classList.add('on');
   haptic();
+}
+function renderFlavorChips(){
+  const box = document.getElementById('sh-flavors');
+  if(!shItem || !hasFlavors(shItem)){ box.innerHTML=''; return; }
+  const fls = liveFlavors(shItem);
+  box.innerHTML = '<div class="rv-title" style="padding:14px 0 8px">🎯 Выбери вкус</div><div class="flav-row">'+
+    fls.map(f=>`<div class="flav-chip ${shFlavor===f.name?'on':''}" onclick="pickFlavor('${f.name.replace(/'/g,"\\'")}')">${f.name}<small>осталось ${f.qty}</small></div>`).join('')+'</div>';
+}
+function pickFlavor(name){
+  shFlavor = name; haptic();
+  renderFlavorChips(); updSh();
 }
 function closeSheet(){
   document.getElementById('ovl').classList.remove('on');
@@ -925,20 +968,34 @@ document.getElementById('grab').addEventListener('touchend', e=>{
   tsY = null;
 });
 function updSh(){
+  const max = (hasFlavors(shItem) && shFlavor) ? flavorStock(shItem, shFlavor) : 99;
+  if(shCount > max) shCount = Math.max(1, max);
   document.getElementById('sh-q').textContent = shCount;
-  document.getElementById('sh-add').textContent = 'Добавить · '+fmt(shItem.price*shCount)+' ₽';
+  const btn = document.getElementById('sh-add');
+  if(hasFlavors(shItem) && !shFlavor){
+    btn.textContent = 'Выбери вкус 🎯';
+  } else {
+    btn.textContent = 'Добавить · '+fmt(shItem.price*shCount)+' ₽';
+  }
 }
 function shQty(d){ shCount = Math.max(1,shCount+d); updSh(); haptic(); }
 function shAdd(){
-  cart[shItem.code] = (cart[shItem.code]||0)+shCount;
+  if(hasFlavors(shItem) && !shFlavor){ toast('Сначала выбери вкус 🎯'); haptic('warn'); return; }
+  const key = shItem.code + '|' + (shFlavor||'');
+  const already = cart[key] ? cart[key].q : 0;
+  const max = hasFlavors(shItem) && shFlavor ? flavorStock(shItem, shFlavor) : Infinity;
+  if(already + shCount > max){
+    toast('В наличии только '+max+' шт этого вкуса'); haptic('warn'); return;
+  }
+  cart[key] = {q: already + shCount, f: shFlavor};
   save('cart',cart);
   closeSheet(); renderList(); renderBadge();
-  toast('Добавлено в корзину ✓'); haptic('ok');
+  toast(shFlavor?('«'+shFlavor+'» в корзине ✓'):'Добавлено в корзину ✓'); haptic('ok');
 }
 
 /* ============ КОРЗИНА ============ */
 function addToCart(code){
-  cart[code] = (cart[code]||0)+1;
+  cart[code+'|'] = {q:(cart[code+'|']?cart[code+'|'].q:0)+1, f:null};
   save('cart',cart);
   renderList(); renderBadge();
   deliveryCost = null; deliveryKm = null; deliveryShop = null;
@@ -950,23 +1007,33 @@ function addToCart(code){
     setTimeout(()=>{ b.classList.remove('done'); b.textContent = '+'; }, 900);
   }
 }
-function changeQty(code,d){
-  cart[code] = (cart[code]||0)+d;
-  if(cart[code]<=0) delete cart[code];
+function changeQty(key,d){
+  if(!cart[key]) return;
+  cart[key].q += d;
+  if(cart[key].q<=0) delete cart[key];
   save('cart',cart);
   renderCart(); renderList(); renderBadge(); haptic();
 }
 function clearCart(){ cart = {}; save('cart',cart); renderCart(); renderList(); renderBadge(); haptic('warn'); }
 function renderBadge(){
-  const n = Object.values(cart).reduce((a,b)=>a+b,0);
+  const n = cartEntries().reduce((a,e)=>a+e.q,0);
   const b = document.getElementById('badge'), nb = document.getElementById('nav-badge');
   b.textContent = n; b.style.display = n?'flex':'none';
   nb.textContent = n; nb.style.display = n?'flex':'none';
 }
+function cartEntries(){
+  return Object.keys(cart).map(k=>{
+    const i = k.indexOf('|');
+    return {code:k.slice(0,i), flavor:k.slice(i+1)||null, q:cart[k].q};
+  });
+}
+function codeQty(code){
+  return cartEntries().filter(e=>e.code===code).reduce((a,e)=>a+e.q,0);
+}
 function cartTotal(){
-  return Object.keys(cart).reduce((a,c)=>{
-    const i = ITEMS.find(x=>x.code===c);
-    return a + (i ? i.price*cart[c] : 0);
+  return cartEntries().reduce((a,e)=>{
+    const i = ITEMS.find(x=>x.code===e.code);
+    return a + (i ? i.price*e.q : 0);
   },0);
 }
 function shipBarHTML(){
@@ -1009,26 +1076,23 @@ function distKm(a,b){
   const h = Math.sin(dLat/2)**2 + Math.cos(toR(a.lat))*Math.cos(toR(b.lat))*Math.sin(dLon/2)**2;
   return 2*R*Math.asin(Math.sqrt(h));
 }
-/* улицы товаров в корзине */
 function streetsInCart(){
   const set = new Set();
-  Object.keys(cart).forEach(code=>{
-    const i = ITEMS.find(x=>x.code===code);
+  cartEntries().forEach(e=>{
+    const i = ITEMS.find(x=>x.code===e.code);
     if(i && i.street) set.add(i.street);
   });
   return [...set];
 }
-/* точка для улицы: «Чоппа» → «Чоппа дом 2», «Российская» → «Российская 24» */
 function shopForStreet(st){
   return SHOPS.find(s=>s.name.toLowerCase().startsWith(String(st).toLowerCase())) || null;
 }
 function calcDelivery(shop, km){
   if(!shop) return null;
   if(shop.min===0 && shop.max===0) return 0;
-  const t = Math.max(0, Math.min(1, km/6));   /* 6 км — максимум */
+  const t = Math.max(0, Math.min(1, km/6));
   return Math.round(shop.min + (shop.max-shop.min)*t);
 }
-/* точки, доступные для самовывоза: те, где лежат товары в корзине */
 function pickupShopsAvailable(){
   const sts = streetsInCart();
   const names = new Set();
@@ -1037,7 +1101,6 @@ function pickupShopsAvailable(){
 }
 function pickupBlock(){
   const avail = pickupShopsAvailable();
-  /* если товар есть только на одной точке — выбираем её автоматически */
   if(avail.length===1 && pickupShop!==avail[0].name) pickupShop = avail[0].name;
   return `<div class="rv-title">🏠 Точка самовывоза</div>
     <div class="streets" style="padding:0 0 8px">
@@ -1053,7 +1116,6 @@ function pickupBlock(){
       }).join('')}
     </div>`;
 }
-/* считаем только когда человек дописал адрес (2 сек пауза или ушёл с поля) */
 let devTimer = null;
 function onAddrInput(){
   clearTimeout(devTimer);
@@ -1084,7 +1146,6 @@ async function recalcDelivery(){
   if(el) el.textContent = 'считаю…';
   const p = await geocode(addr+', Челябинск');
   if(!p){ deliveryKm=null; deliveryCost=null; deliveryShop=null; if(el) el.textContent='адрес не найден — напиши полнее'; updTotals(); return; }
-  /* точка определяется по улицам товаров в корзине */
   const sts = streetsInCart();
   let shops = sts.map(shopForStreet).filter(Boolean).filter(s=>s.lat!==null);
   if(!shops.length) shops = SHOPS.filter(s=>s.lat!==null);
@@ -1122,24 +1183,25 @@ function deliveryPrice(){
 }
 function renderCart(){
   const el = document.getElementById('cart-body');
-  const codes = Object.keys(cart);
-  if(!codes.length){
+  const entries = cartEntries().filter(e=>ITEMS.some(x=>x.code===e.code));
+  if(!entries.length){
     el.innerHTML = '<div class="ghost"><span class="big">🛒</span>Корзина пуста<br>Загляни в каталог — там интересно'+
       '<br><br><button class="cta" style="max-width:240px" onclick="go(\'cat\')">Перейти в каталог</button></div>';
     return;
   }
-  const rows = codes.map(code=>{
-    const i = ITEMS.find(x=>x.code===code);
+  const rows = entries.map(e=>{
+    const i = ITEMS.find(x=>x.code===e.code);
     if(!i) return '';
+    const key = e.code+'|'+(e.flavor||'');
     return `<div class="crow">
       <img src="${i.img||''}" alt="">
-      <div class="m"><b>${i.name}</b><small>${fmt(i.price)} ₽ × ${cart[code]} · ${i.street||'—'}</small></div>
+      <div class="m"><b>${i.name}</b><small>${fmt(i.price)} ₽ × ${e.q}${e.flavor?' · 🎯 '+e.flavor:''} · ${i.street||'—'}</small></div>
       <div class="step">
-        <button onclick="changeQty('${code}',-1)">−</button>
-        <b>${cart[code]}</b>
-        <button onclick="changeQty('${code}',1)">+</button>
+        <button onclick="changeQty('${key}',-1)">−</button>
+        <b>${e.q}</b>
+        <button onclick="changeQty('${key}',1)">+</button>
       </div>
-      <div class="sum">${fmt(i.price*cart[code])} ₽</div></div>`;
+      <div class="sum">${fmt(i.price*e.q)} ₽</div></div>`;
   }).join('');
   const dev = deliveryPrice();
   const grand = cartTotal() + dev;
@@ -1159,9 +1221,9 @@ function renderCart(){
     <h2 class="sec">Контакты</h2>
     <input class="f" id="f-name" placeholder="Твоё имя" value="${load('fname','')}">
     <input class="f" id="f-phone" placeholder="Телефон или @username" value="${load('fphone','')}">
-    <input class="f" id="f-note" placeholder="👅 Вкус (например: манго-лёд)" value="${load('flavor','')}">
+    <input class="f" id="f-note" placeholder="👅 Примечание (например: манго-лёд, 2 шт)" value="${load('flavor','')}">
     <div class="sumbox">
-      <div class="r"><span>Позиций:</span><b>${codes.reduce((a,c)=>a+cart[c],0)}</b></div>
+      <div class="r"><span>Позиций:</span><b>${entries.reduce((a,e)=>a+e.q,0)}</b></div>
       <div class="r"><span>Товары:</span><b>${fmt(cartTotal())} ₽</b></div>
       <div class="r"><span>${orderType==='pickup'?'Самовывоз':'Доставка'}:</span><b id="r-del">${dev?fmt(dev)+' ₽':'бесплатно'}</b></div>
       <div class="r total"><span>Итого:</span><b id="r-total">${fmt(grand)} ₽</b></div>
@@ -1185,9 +1247,9 @@ function submitOrder(){
   const flavor = (document.getElementById('f-note')||{value:''}).value.trim();
   if(!name || !phone){ toast('Заполни имя и контакт'); haptic('warn'); return; }
   save('fname',name); save('fphone',phone); save('faddress',address); save('flavor',flavor);
-  const items = Object.keys(cart).map(code=>{
-    const i = ITEMS.find(x=>x.code===code);
-    return { code, name:i.name, price:i.price, qty:cart[code], street:i.street||'—' };
+  const items = cartEntries().filter(e=>ITEMS.some(x=>x.code===e.code)).map(e=>{
+    const i = ITEMS.find(x=>x.code===e.code);
+    return { code:e.code, name:i.name, price:i.price, qty:e.q, street:i.street||'—', flavor:e.flavor };
   });
   const total = items.reduce((a,x)=>a+x.price*x.qty,0);
   const delivery = deliveryPrice();
@@ -1222,56 +1284,4 @@ function showDone(total){
   cart = {}; save('cart',cart);
   renderList(); renderBadge();
   document.getElementById('done-total').textContent = fmt(total)+' ₽';
-  go('done'); confetti();
-}
-function confetti(){
-  const colors = ['#a855f7','#d946ef','#22d3ee','#ffd166','#ff5c8a','#c084fc'];
-  for(let i=0;i<56;i++){
-    const c = document.createElement('div');
-    c.className = 'conf';
-    c.style.left = Math.random()*100+'vw';
-    c.style.background = colors[i%colors.length];
-    c.style.animationDuration = (Math.random()*1.8+1.6)+'s';
-    c.style.animationDelay = (Math.random()*.6)+'s';
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(),4200);
-  }
-}
-
-/* ============ НАВИГАЦИЯ ============ */
-function go(p){
-  ['cat','cart','info','done'].forEach(id=>{
-    const v = document.getElementById('v-'+id);
-    if(v) v.classList.toggle('on', id===p);
-  });
-  document.getElementById('n-cat').className = p==='cat'?'on':'';
-  document.getElementById('n-cart').className = p==='cart'?'on':'';
-  document.getElementById('n-info').className = p==='info'?'on':'';
-  window.scrollTo(0,0);
-  if(p==='cart') renderCart();
-  if(p==='info') observeNew(document.getElementById('v-info'));
-}
-
-let toastTimer;
-function toast(msg){
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>t.classList.remove('show'),2000);
-}
-
-window.addEventListener('message', function(e){
-  try{
-    const d = typeof e.data==='string' ? JSON.parse(e.data) : e.data;
-    if(d && d.type==='order_saved') showDone(d.total||0);
-  }catch(err){}
-});
-
-initShops().then(loadProducts);
-renderBadge();
-</script>
-</body>
-</html>
-
-
+  go('
