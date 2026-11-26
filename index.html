@@ -578,8 +578,8 @@ nav .npill{position:absolute;top:5px;right:calc(50% - 24px);
   <div class="icard">
     <h3>🚚 Доставка и оплата</h3>
     <ul>
-      <li>Доставка считается по расстоянию до твоего адреса — цена видна сразу в корзине.</li>
-      <li>Самовывоз — всегда бесплатно.</li>
+      <li>Доставка считается по расстоянию до твоего адреса — от ближайшей точки.</li>
+      <li>Самовывоз с любой точки — всегда бесплатно.</li>
       <li>Бесплатная доставка от 3000 ₽ — прогресс виден в корзине.</li>
       <li>Оплата обсуждается лично при подтверждении заказа.</li>
     </ul>
@@ -683,8 +683,14 @@ const FREE_SHIP = 3000;
 /* Доставка по расстоянию */
 let orderType = 'delivery';   // 'delivery' или 'pickup'
 let deliveryCost = null, deliveryKm = null;
-/* Координаты магазина: открой карты, найди свою точку и впиши сюда свои цифры */
-const SHOP = {lat: 55.1602, lon: 61.4026};
+let pickupShop = null;        // выбранная точка для самовывоза
+/* ⚠️ КОМУ НЕЛЬЗЯ ЗАБЫТЬ: впиши сюда реальные координаты двух своих точек.
+   Яндекс.Карты → правый клик по точке → «Что здесь?» → числа вида 55.160243, 61.402618
+   первое число — lat, второе — lon */
+const SHOPS = [
+  {name: 'Точка 1', lat: 55.1602, lon: 61.4026},
+  {name: 'Точка 2', lat: 55.1900, lon: 61.4400}
+];
 
 /* ============ ТЕМЫ ============ */
 let curTheme = load('theme','violet');
@@ -1040,6 +1046,14 @@ function distKm(a,b){
   const h = Math.sin(dLat/2)**2 + Math.cos(toR(a.lat))*Math.cos(toR(b.lat))*Math.sin(dLon/2)**2;
   return 2*R*Math.asin(Math.sqrt(h));
 }
+function nearestShop(lat, lon){
+  let best = null, bestKm = Infinity;
+  for(const s of SHOPS){
+    const km = distKm(s, {lat, lon});
+    if(km < bestKm){ bestKm = km; best = s; }
+  }
+  return {shop: best, km: bestKm};
+}
 function calcDelivery(street, km){
   const s = STREETS.find(x=>x.name===street);
   if(!s) return null;
@@ -1061,9 +1075,10 @@ async function recalcDelivery(){
   if(el) el.textContent = 'считаю…';
   const p = await geocode(addr);
   if(!p){ deliveryKm=null; deliveryCost=null; if(el) el.textContent='адрес не найден — напиши полнее'; return; }
-  deliveryKm = distKm(SHOP, p);
+  const ns = nearestShop(p.lat, p.lon);
+  deliveryKm = ns.km;
   deliveryCost = calcDelivery(curStreet, deliveryKm);
-  if(el) el.textContent = (deliveryKm!==null?deliveryKm.toFixed(1)+' км — ':'') + fmt(deliveryCost||0)+' ₽';
+  if(el) el.textContent = (deliveryKm!==null?deliveryKm.toFixed(1)+' км от '+ns.shop.name+' — ':'') + fmt(deliveryCost||0)+' ₽';
   renderCart();
 }
 let devTimer;
@@ -1114,7 +1129,10 @@ function renderCart(){
       </select>
       <input class="f" id="f-address" placeholder="🏠 Адрес (улица, дом, квартира)" value="${load('faddress','')}" oninput="onAddrInput()">
       <div class="shipbar"><div class="sb-t">🚚 Доставка: <b id="dev-value">укажи адрес</b></div></div>`
-    : `<input class="f" id="f-address" placeholder="🏠 Адрес самовывоза не нужен — просто напиши, если удобно" style="display:none">`;
+    : `<select id="f-pickup" class="f" style="appearance:none" onchange="pickupShop=this.value">
+        <option value="">🏠 Выбери точку самовывоза</option>
+        ${SHOPS.map(s=>`<option value="${s.name}" ${pickupShop===s.name?'selected':''}>🏠 ${s.name}</option>`).join('')}
+      </select>`;
   el.innerHTML = shipBarHTML() + rows +
     `<h2 class="sec">Получение</h2>
     <div style="display:flex;gap:9px;margin-bottom:13px">
@@ -1135,7 +1153,6 @@ function renderCart(){
       <button class="clear-btn" onclick="clearCart()">Очистить корзину</button>
     </div>`;
   observeNew(el);
-  /* подставляем сохранённый адрес и сразу считаем доставку */
   if(orderType==='delivery' && load('faddress','')){
     deliveryCost = null;
     recalcDelivery();
@@ -1149,6 +1166,9 @@ function submitOrder(){
   const streetSel = document.getElementById('f-street');
   const street = isPickup ? 'Самовывоз' : (streetSel ? streetSel.value : '—');
   if(!isPickup && street==='—'){ toast('Выбери улицу доставки 📍'); haptic('warn'); return; }
+  const pickupSel = document.getElementById('f-pickup');
+  if(isPickup){ pickupShop = pickupSel ? pickupSel.value : ''; }
+  if(isPickup && !pickupShop){ toast('Выбери точку самовывоза 🏠'); haptic('warn'); return; }
   const addressEl = document.getElementById('f-address');
   const address = addressEl ? addressEl.value.trim() : '';
   if(!isPickup && !address){ toast('Укажи адрес доставки 🏠'); haptic('warn'); return; }
@@ -1169,7 +1189,7 @@ function submitOrder(){
   save('orders',orders); renderOrders();
   haptic('ok');
   const payload = { type:'order', name, phone, items, total, delivery, street, address,
-                    order: isPickup?'самовывоз':'доставка', km: deliveryKm };
+                    order: isPickup?('самовывоз · '+pickupShop):'доставка', km: deliveryKm };
   if(flavor) payload.flavor = flavor;
   tg.sendData(JSON.stringify(payload));
 }
@@ -1242,4 +1262,5 @@ renderBadge();
 </script>
 </body>
 </html>
+
 
