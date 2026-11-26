@@ -40,5 +40,12 @@
   "user_id": 7104234275,
   "used": false,
   "created": "2026-11-26 16:37"
+ },
+ "LIB-BWZTQ2": {
+  "id": "discount10",
+  "percent": 10,
+  "user_id": 7104234275,
+  "used": false,
+  "created": "2026-11-26 16:37"
  }
 }
