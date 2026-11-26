@@ -37,7 +37,6 @@ body{font-family:'Manrope',-apple-system,'Segoe UI',Roboto,sans-serif;
   background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;
   -webkit-font-smoothing:antialiased;transition:background .6s ease}
 
-/* ============ ФОН ============ */
 #stars{position:fixed;inset:0;z-index:0;pointer-events:none}
 .sky{position:fixed;inset:0;z-index:1;overflow:hidden;pointer-events:none}
 .mesh{position:absolute;inset:-20%;
@@ -59,7 +58,6 @@ body{font-family:'Manrope',-apple-system,'Segoe UI',Roboto,sans-serif;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 main{position:relative;z-index:5}
 
-/* ============ СПЛЭШ ============ */
 #splash{position:fixed;inset:0;z-index:200;background:var(--bg);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   transition:opacity .8s cubic-bezier(.4,0,.2,1),visibility .8s}
@@ -81,7 +79,6 @@ main{position:relative;z-index:5}
 .sp-sub{color:var(--muted);font-size:11px;margin-top:15px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
   animation:fadeUp .8s .35s cubic-bezier(.2,.8,.2,1) both}
 
-/* ============ ШАПКА ============ */
 header{position:sticky;top:0;z-index:30;
   padding:calc(14px + env(safe-area-inset-top)) 18px 12px;
   background:color-mix(in srgb,var(--bg) 88%,transparent);
@@ -114,12 +111,10 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
   box-shadow:0 3px 12px rgba(255,60,90,.5);animation:pop .3s cubic-bezier(.2,1.6,.4,1)}
 @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
 
-/* ============ ЭКРАНЫ ============ */
 .view{display:none;opacity:0}
 .view.on{display:block;animation:viewIn .5s cubic-bezier(.22,1,.36,1) forwards}
 @keyframes viewIn{from{opacity:0;transform:translateY(18px) scale(.99)}to{opacity:1;transform:none}}
 
-/* ============ HERO ============ */
 .hero{margin:18px 16px 4px;padding:28px 22px;border-radius:30px;position:relative;overflow:hidden;
   background:var(--hero);border:1px solid var(--line)}
 .hero::before{content:'';position:absolute;top:-90%;left:-35%;width:60%;height:280%;
@@ -141,7 +136,6 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
 .stat b{font-family:'Unbounded',sans-serif;font-size:17px;color:var(--acc);display:block}
 .stat span{font-size:10.5px;color:var(--muted);font-weight:600}
 
-/* ============ ХИТ ПРОДАЖ ============ */
 .hit{margin:16px 16px 0;border-radius:30px;overflow:hidden;position:relative;cursor:pointer;
   border:1px solid var(--line);min-height:200px;display:flex;align-items:flex-end}
 .hit .hit-img{position:absolute;inset:0}
@@ -166,7 +160,6 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
   transition:transform .3s cubic-bezier(.2,1.4,.4,1)}
 .hit-btn:active{transform:scale(.94)}
 
-/* ============ УЛИЦЫ ============ */
 .streets{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:4px 16px 0}
 .scard{padding:18px 14px;border-radius:20px;cursor:pointer;background:var(--glass);
   border:1px solid var(--line);transition:all .3s cubic-bezier(.2,1.4,.4,1)}
@@ -175,7 +168,6 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
 .scard b{display:block;font-size:14px}
 .scard small{color:var(--muted);font-size:11px;font-weight:600}
 
-/* ============ ПОИСК ============ */
 .search{margin:18px 16px 0;position:relative}
 .search input{width:100%;padding:16px 46px 16px 48px;border-radius:20px;
   border:1px solid var(--line);background:var(--glass);color:var(--text);
@@ -189,7 +181,6 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
   background:rgba(255,255,255,.08);color:var(--text);font-size:14px;display:none}
 .search .clr.show{display:flex;align-items:center;justify-content:center}
 
-/* ============ КАТЕГОРИИ / СОРТИРОВКА ============ */
 .chips{display:flex;gap:8px;padding:18px 16px 4px;overflow-x:auto;scrollbar-width:none}
 .chips::-webkit-scrollbar{display:none}
 .chip{padding:11px 19px;border-radius:24px;font-size:13px;font-weight:700;white-space:nowrap;
@@ -204,7 +195,6 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
   transition:all .3s cubic-bezier(.2,1.4,.4,1)}
 .sort.on{color:var(--acc2);border-color:var(--acc2);background:color-mix(in srgb,var(--acc2) 10%,transparent)}
 
-/* ============ НЕДАВНО СМОТРЕЛИ ============ */
 .rv-wrap{padding:6px 0 0}
 .rv-title{font-size:12px;font-weight:800;color:var(--muted);padding:14px 18px 8px;letter-spacing:.5px;text-transform:uppercase}
 .rv{display:flex;gap:10px;padding:4px 16px 6px;overflow-x:auto;scrollbar-width:none}
@@ -216,7 +206,6 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
 .rv-card img{width:128px;height:80px;object-fit:cover;display:block;background:#120a20}
 .rv-card .t{font-size:11px;font-weight:700;padding:8px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* ============ СЕТКА ============ */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(162px,1fr));gap:15px;padding:16px 16px 130px}
 .card-wrap{position:relative;border-radius:26px}
 .card-wrap::before{content:'';position:absolute;inset:-1.5px;border-radius:27px;z-index:0;
@@ -273,7 +262,6 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
 .add:active{background:var(--acc);color:var(--on-acc);transform:scale(.78) rotate(90deg)}
 .add.done{background:var(--acc);color:var(--on-acc);transform:scale(1.05)}
 
-/* ============ СКЕЛЕТОН / ПУСТО ============ */
 .skel{border-radius:26px;overflow:hidden;background:var(--glass);border:1px solid var(--line)}
 .shimmer{background:linear-gradient(100deg,rgba(255,255,255,.04) 30%,rgba(255,255,255,.12) 50%,rgba(255,255,255,.04) 70%);
   background-size:200% 100%;animation:sh 1.4s infinite}
@@ -285,7 +273,6 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
 .ghost .big{font-size:50px;display:block;margin-bottom:14px;filter:grayscale(.2);animation:floaty 3s ease-in-out infinite}
 @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
 
-/* ============ SHEET ============ */
 .ovl{position:fixed;inset:0;background:rgba(4,2,12,.68);z-index:60;
   opacity:0;pointer-events:none;transition:opacity .4s;backdrop-filter:blur(8px)}
 .ovl.on{opacity:1;pointer-events:auto}
@@ -333,7 +320,6 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
   font-size:14px;font-weight:700;font-family:'Manrope';transition:.3s}
 .sh-fav.onx{border-color:rgba(255,60,110,.5);color:#ff7d95;background:rgba(255,60,110,.08)}
 
-/* ============ КОРЗИНА ============ */
 .wrap{padding:18px 16px 140px}
 .crow{display:flex;align-items:center;gap:13px;
   background:var(--glass);border:1px solid var(--line);
@@ -387,7 +373,6 @@ button.th{font-family:'Manrope';color:var(--text)}
   font-size:14px;font-weight:700;font-family:'Manrope';transition:.3s}
 .clear-btn:active{background:rgba(255,60,90,.12)}
 
-/* ============ ФУТЕР ============ */
 footer{position:relative;z-index:5;text-align:center;padding:26px 20px 130px;color:var(--muted)}
 footer .fl{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;letter-spacing:1.5px;
   background:linear-gradient(90deg,var(--acc),var(--acc2));
@@ -395,7 +380,6 @@ footer .fl{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;let
 footer p{font-size:12px;margin-top:8px;line-height:1.7}
 footer .dot-sep{opacity:.4;margin:0 6px}
 
-/* ============ ИНФО ============ */
 .icard{margin:0 16px 14px;padding:21px;border-radius:24px;
   background:var(--glass);border:1px solid var(--line);
   backdrop-filter:blur(16px);opacity:0;transform:translateY(18px);
@@ -421,7 +405,6 @@ footer .dot-sep{opacity:.4;margin:0 6px}
 .th-neon .dot{background:linear-gradient(135deg,#00e676,#00c2ff,#b44bff)}
 .th-mono .dot{background:linear-gradient(135deg,#f2f2f7,#9aa0ab)}
 
-/* ============ УСПЕХ ============ */
 .done{min-height:72vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:30px;text-align:center}
 .done .ring{width:106px;height:106px;border-radius:50%;margin-bottom:24px;
   background:linear-gradient(135deg,var(--acc),var(--acc2));
@@ -435,7 +418,6 @@ footer .dot-sep{opacity:.4;margin:0 6px}
   animation:fall linear forwards;pointer-events:none}
 @keyframes fall{to{transform:translateY(112vh) rotate(780deg);opacity:.12}}
 
-/* ============ НАВИГАЦИЯ ============ */
 nav{position:fixed;left:50%;transform:translateX(-50%);
   bottom:calc(13px + env(safe-area-inset-bottom));
   display:flex;z-index:40;border-radius:28px;overflow:hidden;width:calc(100% - 28px);max-width:432px;
@@ -455,7 +437,6 @@ nav .npill{position:absolute;top:5px;right:calc(50% - 24px);
   min-width:16px;height:16px;border-radius:8px;
   display:flex;align-items:center;justify-content:center;padding:0 4px}
 
-/* ============ КНОПКА НАВЕРХ / ТОСТ ============ */
 .topbtn{position:fixed;right:16px;bottom:96px;z-index:35;
   width:44px;height:44px;border-radius:50%;border:1px solid var(--line);cursor:pointer;
   background:color-mix(in srgb,var(--bg) 90%,transparent);backdrop-filter:blur(20px);
@@ -573,13 +554,13 @@ nav .npill{position:absolute;top:5px;right:calc(50% - 24px);
   </div>
   <div class="icard">
     <h3>🛍 О магазине</h3>
-    <p>Libirny Shop — небольшой магазин с каталогом 18+. Выбери свою улицу, собери корзину и оформи заказ — заявка уйдёт нам в бота. Доставка или самовывоз — как удобнее.</p>
+    <p>Libirny Shop — небольшой магазин с каталогом 18+. Две точки: Российская 24 и Чоппа дом 2. Собери корзину и оформи заказ — заявка уйдёт нам в бота.</p>
   </div>
   <div class="icard">
     <h3>🚚 Доставка и оплата</h3>
     <ul>
-      <li>Доставка считается по расстоянию до твоего адреса — от ближайшей точки.</li>
-      <li>Самовывоз с любой точки — всегда бесплатно.</li>
+      <li>Доставка считается от ближайшей к тебе точки: с Российской 24 — бесплатно, с Чоппы 2 — от 10 до 100 ₽ по расстоянию.</li>
+      <li>Самовывоз с любой точки — бесплатно, укажи только удобную.</li>
       <li>Бесплатная доставка от 3000 ₽ — прогресс виден в корзине.</li>
       <li>Оплата обсуждается лично при подтверждении заказа.</li>
     </ul>
@@ -684,12 +665,11 @@ const FREE_SHIP = 3000;
 let orderType = 'delivery';   // 'delivery' или 'pickup'
 let deliveryCost = null, deliveryKm = null;
 let pickupShop = null;        // выбранная точка для самовывоза
-/* ⚠️ КОМУ НЕЛЬЗЯ ЗАБЫТЬ: впиши сюда реальные координаты двух своих точек.
-   Яндекс.Карты → правый клик по точке → «Что здесь?» → числа вида 55.160243, 61.402618
-   первое число — lat, второе — lon */
+/* Точки магазина: цены доставки у каждой точки свои.
+   Российская 24 — бесплатно (0–0), Чоппа 2 — дороже (10–100) */
 const SHOPS = [
-  {name: 'Точка 1', lat: 55.1602, lon: 61.4026},
-  {name: 'Точка 2', lat: 55.1900, lon: 61.4400}
+  {name: 'Российская 24', addr: 'Российская, 24, Челябинск', lat: null, lon: null, min: 0, max: 0},
+  {name: 'Чоппа дом 2',   addr: 'Чоппа, 2, Челябинск',       lat: null, lon: null, min: 10, max: 100}
 ];
 
 /* ============ ТЕМЫ ============ */
@@ -766,9 +746,7 @@ async function loadProducts(){
     const rs = await fetch('streets.json?t='+Date.now());
     let raw = await rs.json();
     if(!Array.isArray(raw)) raw = [];
-    STREETS = raw.map(s => typeof s==='string'
-      ? {name:s, min:0, max:50}
-      : {name:s.name, min:+(s.min ?? s.delivery ?? 0), max:+(s.max ?? s.delivery ?? 0)});
+    STREETS = raw.map(s => typeof s==='string' ? {name:s} : {name:s.name});
   }catch(e){ STREETS = []; }
   if(curStreet && !STREETS.some(s=>s.name===curStreet)) curStreet = null;
   renderStreets(); renderChips(); renderList(); renderRecent(); renderOrders(); renderHit(); animateStats();
@@ -787,10 +765,9 @@ function animNum(id,target){
 function renderStreets(){
   const w = document.getElementById('streets-wrap');
   if(!STREETS.length){ w.innerHTML=''; return; }
-  w.innerHTML = '<div class="rv-title">📍 Улицы · доставка</div><div class="streets">'+STREETS.map(s=>{
+  w.innerHTML = '<div class="rv-title">📍 Улицы</div><div class="streets">'+STREETS.map(s=>{
     const n = ITEMS.filter(i=>i.street===s.name).length;
-    const price = (s.min===0 && s.max===0) ? 'бесплатно' : s.min+'–'+s.max+' ₽';
-    return `<div class="scard ${curStreet===s.name?'on':''}" onclick="pickStreet('${s.name.replace(/'/g,"\\'")}')"><span class="ic">📍</span><b>${s.name}</b><small>${n} товаров · доставка ${price}</small></div>`;
+    return `<div class="scard ${curStreet===s.name?'on':''}" onclick="pickStreet('${s.name.replace(/'/g,"\\'")}')"><span class="ic">📍</span><b>${s.name}</b><small>${n} товаров</small></div>`;
   }).join('')+'</div>';
 }
 function pickStreet(s){
@@ -956,7 +933,6 @@ function closeSheet(){
   document.getElementById('ovl').classList.remove('on');
   document.getElementById('sheet').classList.remove('on');
 }
-/* свайп-вниз для закрытия */
 let tsY = null;
 document.getElementById('grab').addEventListener('touchstart', e=>{ tsY = e.touches[0].clientY; },{passive:true});
 document.getElementById('grab').addEventListener('touchmove', e=>{
@@ -1033,12 +1009,20 @@ function shipBarHTML(){
 /* ============ ДОСТАВКА ПО РАССТОЯНИЮ ============ */
 async function geocode(address){
   try{
-    const q = encodeURIComponent(address+', Челябинск');
+    const q = encodeURIComponent(address);
     const r = await fetch('https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=ru&q='+q);
     const j = await r.json();
     if(j && j[0]) return {lat:+j[0].lat, lon:+j[0].lon};
   }catch(e){}
   return null;
+}
+async function initShops(){
+  for(const s of SHOPS){
+    if(s.lat === null){
+      const p = await geocode(s.addr);
+      if(p){ s.lat = p.lat; s.lon = p.lon; }
+    }
+  }
 }
 function distKm(a,b){
   const R = 6371, toR = x=>x*Math.PI/180;
@@ -1049,36 +1033,37 @@ function distKm(a,b){
 function nearestShop(lat, lon){
   let best = null, bestKm = Infinity;
   for(const s of SHOPS){
+    if(s.lat === null) continue;
     const km = distKm(s, {lat, lon});
     if(km < bestKm){ bestKm = km; best = s; }
   }
   return {shop: best, km: bestKm};
 }
-function calcDelivery(street, km){
-  const s = STREETS.find(x=>x.name===street);
-  if(!s) return null;
-  if(s.min===0 && s.max===0) return 0;
-  const t = Math.max(0, Math.min(1, km/6));   /* 6 км — максимум, дальше считается как 6 */
-  return Math.round(s.min + (s.max-s.min)*t);
+/* цена доставки — по вилке БЛИЖАЙШЕЙ точки */
+function calcDelivery(shop, km){
+  if(!shop) return null;
+  if(shop.min===0 && shop.max===0) return 0;
+  const t = Math.max(0, Math.min(1, km/6));   /* 6 км — максимум */
+  return Math.round(shop.min + (shop.max-shop.min)*t);
 }
 async function recalcDelivery(){
-  if(orderType!=='delivery' || !curStreet || curStreet==='—'){
+  const el = document.getElementById('dev-value');
+  if(orderType!=='delivery'){
     deliveryCost=null; deliveryKm=null;
-    const el = document.getElementById('dev-value');
-    if(el) el.textContent = 'выбери улицу';
+    if(el) el.textContent = 'бесплатно';
     return;
   }
   const addrEl = document.getElementById('f-address');
   const addr = addrEl ? addrEl.value.trim() : '';
-  const el = document.getElementById('dev-value');
   if(!addr){ deliveryCost=null; deliveryKm=null; if(el) el.textContent='укажи адрес'; return; }
   if(el) el.textContent = 'считаю…';
-  const p = await geocode(addr);
+  const p = await geocode(addr+', Челябинск');
   if(!p){ deliveryKm=null; deliveryCost=null; if(el) el.textContent='адрес не найден — напиши полнее'; return; }
   const ns = nearestShop(p.lat, p.lon);
+  if(!ns.shop){ if(el) el.textContent='точки не найдены'; return; }
   deliveryKm = ns.km;
-  deliveryCost = calcDelivery(curStreet, deliveryKm);
-  if(el) el.textContent = (deliveryKm!==null?deliveryKm.toFixed(1)+' км от '+ns.shop.name+' — ':'') + fmt(deliveryCost||0)+' ₽';
+  deliveryCost = calcDelivery(ns.shop, ns.km);
+  if(el) el.textContent = deliveryKm.toFixed(1)+' км от '+ns.shop.name+' — '+(deliveryCost?fmt(deliveryCost)+' ₽':'бесплатно');
   renderCart();
 }
 let devTimer;
@@ -1096,8 +1081,7 @@ function deliveryPrice(){
   if(orderType==='pickup') return 0;
   if(cartTotal() >= FREE_SHIP) return 0;
   if(deliveryCost!==null) return deliveryCost;
-  const s = STREETS.find(x=>x.name===curStreet);
-  return s ? s.min : 0;
+  return 0;
 }
 function renderCart(){
   const el = document.getElementById('cart-body');
@@ -1123,16 +1107,13 @@ function renderCart(){
   const dev = deliveryPrice();
   const grand = cartTotal() + dev;
   const addrBlock = orderType==='delivery'
-    ? `<select id="f-street" class="f" style="appearance:none" onchange="curStreet=this.value;deliveryCost=null;recalcDelivery()">
-        <option value="—">📍 Выбери улицу доставки</option>
-        ${STREETS.map(s=>`<option value="${s.name}" ${curStreet===s.name?'selected':''}>📍 ${s.name}${(s.min===0&&s.max===0)?' — бесплатно':' — '+s.min+'–'+s.max+' ₽'}</option>`).join('')}
-      </select>
-      <input class="f" id="f-address" placeholder="🏠 Адрес (улица, дом, квартира)" value="${load('faddress','')}" oninput="onAddrInput()">
-      <div class="shipbar"><div class="sb-t">🚚 Доставка: <b id="dev-value">укажи адрес</b></div></div>`
-    : `<select id="f-pickup" class="f" style="appearance:none" onchange="pickupShop=this.value">
-        <option value="">🏠 Выбери точку самовывоза</option>
-        ${SHOPS.map(s=>`<option value="${s.name}" ${pickupShop===s.name?'selected':''}>🏠 ${s.name}</option>`).join('')}
-      </select>`;
+    ? `<input class="f" id="f-address" placeholder="🏠 Адрес (улица, дом, квартира)" value="${load('faddress','')}" oninput="onAddrInput()">
+       <div class="shipbar"><div class="sb-t">🚚 Доставка: <b id="dev-value">укажи адрес</b></div>
+       <div style="font-size:11px;color:var(--muted);margin-top:6px">Цена считается от ближайшей точки: Российская 24 — бесплатно, Чоппа дом 2 — 10–100 ₽</div></div>`
+    : `<div class="rv-title">🏠 Точка самовывоза</div>
+       <div class="streets" style="padding:0 0 8px">
+        ${SHOPS.map(s=>`<div class="scard ${pickupShop===s.name?'on':''}" onclick="pickupShop='${s.name}';haptic();renderCart()"><span class="ic">🏠</span><b>${s.name}</b><small>самовывоз — бесплатно</small></div>`).join('')}
+       </div>`;
   el.innerHTML = shipBarHTML() + rows +
     `<h2 class="sec">Получение</h2>
     <div style="display:flex;gap:9px;margin-bottom:13px">
@@ -1163,11 +1144,6 @@ function renderCart(){
 function submitOrder(){
   if(!tg || !tg.sendData){ toast('Открой магазин через кнопку бота 🙂'); return; }
   const isPickup = orderType==='pickup';
-  const streetSel = document.getElementById('f-street');
-  const street = isPickup ? 'Самовывоз' : (streetSel ? streetSel.value : '—');
-  if(!isPickup && street==='—'){ toast('Выбери улицу доставки 📍'); haptic('warn'); return; }
-  const pickupSel = document.getElementById('f-pickup');
-  if(isPickup){ pickupShop = pickupSel ? pickupSel.value : ''; }
   if(isPickup && !pickupShop){ toast('Выбери точку самовывоза 🏠'); haptic('warn'); return; }
   const addressEl = document.getElementById('f-address');
   const address = addressEl ? addressEl.value.trim() : '';
@@ -1183,16 +1159,20 @@ function submitOrder(){
   });
   const total = items.reduce((a,x)=>a+x.price*x.qty,0);
   const delivery = deliveryPrice();
+  const nearestForDev = deliveryKm!==null ? nearestShopFromLastKm : null;
   orders.unshift({ date:new Date().toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}),
     count:items.reduce((a,x)=>a+x.qty,0), total });
   orders = orders.slice(0,20);
   save('orders',orders); renderOrders();
   haptic('ok');
-  const payload = { type:'order', name, phone, items, total, delivery, street, address,
-                    order: isPickup?('самовывоз · '+pickupShop):'доставка', km: deliveryKm };
+  const payload = { type:'order', name, phone, items, total, delivery,
+                    address: isPickup ? ('Самовывоз: '+pickupShop) : address,
+                    order: isPickup?('самовывоз · '+pickupShop):'доставка',
+                    km: isPickup ? null : deliveryKm };
   if(flavor) payload.flavor = flavor;
   tg.sendData(JSON.stringify(payload));
 }
+let nearestShopFromLastKm = null; /* имя ближайшей точки последнего расчёта доставки */
 function renderOrders(){
   const box = document.getElementById('orders-box');
   if(!orders.length){
@@ -1257,10 +1237,9 @@ window.addEventListener('message', function(e){
   }catch(err){}
 });
 
-loadProducts();
+initShops().then(loadProducts);
 renderBadge();
 </script>
 </body>
 </html>
-
 
