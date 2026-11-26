@@ -136,29 +136,13 @@ header.scrolled{box-shadow:0 12px 44px rgba(0,0,0,.55);padding-top:calc(10px + e
 .stat b{font-family:'Unbounded',sans-serif;font-size:17px;color:var(--acc);display:block}
 .stat span{font-size:10.5px;color:var(--muted);font-weight:600}
 
+/* Хит продаж: только фото */
 .hit{margin:16px 16px 0;border-radius:30px;overflow:hidden;position:relative;cursor:pointer;
-  border:1px solid var(--line);min-height:200px;display:flex;align-items:flex-end}
-.hit .hit-img{position:absolute;inset:0}
-.hit .hit-img img{width:100%;height:100%;object-fit:cover}
-.hit .hit-img::after{content:'';position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(7,3,18,.15) 0%,rgba(7,3,18,.92) 85%)}
-.hit-noimg{position:absolute;inset:0;
+  border:1px solid var(--line);height:240px;display:block}
+.hit img{width:100%;height:100%;object-fit:cover;display:block}
+.hit-noimg{width:100%;height:100%;
   background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 30%,transparent),color-mix(in srgb,var(--acc3) 25%,transparent));
   display:flex;align-items:center;justify-content:center;font-size:64px;opacity:.6}
-.hit-label{position:absolute;top:16px;left:16px;z-index:2;
-  padding:7px 14px;border-radius:14px;font-size:11px;font-weight:900;letter-spacing:1.2px;text-transform:uppercase;
-  background:linear-gradient(135deg,var(--danger),#ff9f43);color:#fff;
-  box-shadow:0 6px 20px rgba(255,90,60,.45);animation:pulseHit 2s ease-in-out infinite}
-@keyframes pulseHit{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-.hit-body{position:relative;z-index:2;padding:20px;width:100%}
-.hit-name{font-family:'Unbounded',sans-serif;font-size:19px;font-weight:800;line-height:1.3}
-.hit-row{display:flex;align-items:center;justify-content:space-between;margin-top:12px}
-.hit-price{font-size:21px;font-weight:900;color:var(--acc)}
-.hit-btn{padding:12px 20px;border:none;border-radius:16px;cursor:pointer;
-  font-weight:800;font-size:14px;font-family:'Manrope';color:var(--on-acc);
-  background:linear-gradient(135deg,var(--acc),var(--acc2));box-shadow:0 8px 26px var(--glow);
-  transition:transform .3s cubic-bezier(.2,1.4,.4,1)}
-.hit-btn:active{transform:scale(.94)}
 
 .streets{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;padding:4px 16px 0}
 .scard{padding:18px 14px;border-radius:20px;cursor:pointer;background:var(--glass);
@@ -494,7 +478,7 @@ nav .npill{position:absolute;top:5px;right:calc(50% - 24px);
   <div class="hero">
     <div class="kick">Libirny Shop · 2026</div>
     <h2 id="hero-title">Новые позиции<br><span>уже здесь</span></h2>
-    <p>Выбирай свою улицу, добавляй в корзину и оформляй заказ — всё в пару касаний.</p>
+    <p>Собирай корзину и оформляй заказ — всё в пару касаний.</p>
     <div class="hero-tags">
       <div class="htag">⚡ Доставка</div>
       <div class="htag">🔒 Безопасно</div>
@@ -554,12 +538,12 @@ nav .npill{position:absolute;top:5px;right:calc(50% - 24px);
   </div>
   <div class="icard">
     <h3>🛍 О магазине</h3>
-    <p>Libirny Shop — небольшой магазин с каталогом 18+. Две точки: Российская 24 и Чоппа дом 2. Собери корзину и оформи заказ — заявка уйдёт нам в бота.</p>
+    <p>Libirny Shop — небольшой магазин с каталогом 18+. Две точки: Российская 24 и Чоппа дом 2. У каждой точки свои товары. Собери корзину и оформи заказ — заявка уйдёт нам в бота.</p>
   </div>
   <div class="icard">
     <h3>🚚 Доставка и оплата</h3>
     <ul>
-      <li>Доставка считается от ближайшей к тебе точки: с Российской 24 — бесплатно, с Чоппы 2 — от 10 до 100 ₽ по расстоянию.</li>
+      <li>Доставка считается от той точки, где лежит твой товар: с Российской 24 — бесплатно, с Чоппы дом 2 — от 10 до 100 ₽ по расстоянию.</li>
       <li>Самовывоз с любой точки — бесплатно, укажи только удобную.</li>
       <li>Бесплатная доставка от 3000 ₽ — прогресс виден в корзине.</li>
       <li>Оплата обсуждается лично при подтверждении заказа.</li>
@@ -593,7 +577,7 @@ nav .npill{position:absolute;top:5px;right:calc(50% - 24px);
 
 <nav>
   <div class="on" id="n-cat" onclick="go('cat')"><span class="ic">🏠</span>Каталог</div>
-  <div id="n-cart" onclick="go('cart')"><span class="ic">🛒</span>Корзина<span class="npill" id="nav-badge" style="display:none">0</span></div>
+  <div id="n-cart" onclick="go('cart')"><span class="ic">🛒</span>Корзina<span class="npill" id="nav-badge" style="display:none">0</span></div>
   <div id="n-info" onclick="go('info')"><span class="ic">ℹ️</span>Инфо</div>
 </nav>
 
@@ -662,11 +646,11 @@ let curCat = 'Все', curSort = 'new', shItem = null, shCount = 1;
 const FREE_SHIP = 3000;
 
 /* Доставка по расстоянию */
-let orderType = 'delivery';   // 'delivery' или 'pickup'
-let deliveryCost = null, deliveryKm = null;
-let pickupShop = null;        // выбранная точка для самовывоза
+let orderType = 'delivery';
+let deliveryCost = null, deliveryKm = null, deliveryShop = null;
+let pickupShop = null;
 /* Точки магазина: цены доставки у каждой точки свои.
-   Российская 24 — бесплатно (0–0), Чоппа 2 — дороже (10–100) */
+   Российская 24 — бесплатно (0–0), Чоппа дом 2 — дороже (10–100) */
 const SHOPS = [
   {name: 'Российская 24', addr: 'Российская, 24, Челябинск', lat: null, lon: null, min: 0, max: 0},
   {name: 'Чоппа дом 2',   addr: 'Чоппа, 2, Челябинск',       lat: null, lon: null, min: 10, max: 100}
@@ -776,21 +760,14 @@ function pickStreet(s){
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
-/* ============ ХИТ ПРОДАЖ ============ */
+/* ============ ХИТ ПРОДАЖ — только фото ============ */
 function renderHit(){
   const wrap = document.getElementById('hit-wrap');
   const hit = ITEMS.find(i=>i.badge==='hot') || ITEMS.find(i=>i.old_price) || ITEMS[0];
   if(!hit){ wrap.innerHTML=''; return; }
   wrap.innerHTML = `<div class="hit" onclick="openSheet('${hit.code}')">
-    <div class="hit-img">${hit.img?`<img src="${hit.img}">`:'<div class="hit-noimg">🔥</div>'}</div>
-    <div class="hit-label">🔥 Хит продаж</div>
-    <div class="hit-body">
-      <div class="hit-name">${hit.name}</div>
-      <div class="hit-row">
-        <div class="hit-price">${fmt(hit.price)} ₽</div>
-        <button class="hit-btn" onclick="event.stopPropagation();addToCart('${hit.code}')">В корзину</button>
-      </div>
-    </div></div>`;
+    ${hit.img?`<img src="${hit.img}" alt="">`:'<div class="hit-noimg">🔥</div>'}
+  </div>`;
 }
 
 /* ============ КАТЕГОРИИ / СОРТИРОВКА / ПОИСК ============ */
@@ -923,7 +900,7 @@ function openSheet(code){
   document.getElementById('sh-price').innerHTML =
     (i.old_price&&i.old_price>i.price?'<span class="oldp" style="font-size:15px">'+fmt(i.old_price)+' ₽</span> ':'')
     + fmt(i.price)+' <small>₽</small>';
-  document.getElementById('sh-per').textContent = i.desc ? i.desc : 'Улица: '+(i.street||'—')+' · оформление через бота';
+  document.getElementById('sh-per').textContent = i.desc ? i.desc : 'Точка: '+(i.street||'—')+' · оформление через бота';
   updSh(); updShFav(); renderStarsBig();
   document.getElementById('ovl').classList.add('on');
   document.getElementById('sheet').classList.add('on');
@@ -964,6 +941,8 @@ function addToCart(code){
   cart[code] = (cart[code]||0)+1;
   save('cart',cart);
   renderList(); renderBadge();
+  deliveryCost = null; deliveryKm = null; deliveryShop = null;
+  if(document.getElementById('cart-body').innerHTML) renderCart();
   toast('Добавлено в корзину ✓'); haptic('ok');
   const b = document.getElementById('add-'+code);
   if(b){
@@ -1030,58 +1009,91 @@ function distKm(a,b){
   const h = Math.sin(dLat/2)**2 + Math.cos(toR(a.lat))*Math.cos(toR(b.lat))*Math.sin(dLon/2)**2;
   return 2*R*Math.asin(Math.sqrt(h));
 }
-function nearestShop(lat, lon){
-  let best = null, bestKm = Infinity;
-  for(const s of SHOPS){
-    if(s.lat === null) continue;
-    const km = distKm(s, {lat, lon});
-    if(km < bestKm){ bestKm = km; best = s; }
-  }
-  return {shop: best, km: bestKm};
+/* улицы товаров в корзине */
+function streetsInCart(){
+  const set = new Set();
+  Object.keys(cart).forEach(code=>{
+    const i = ITEMS.find(x=>x.code===code);
+    if(i && i.street) set.add(i.street);
+  });
+  return [...set];
 }
-/* цена доставки — по вилке БЛИЖАЙШЕЙ точки */
+/* точка для улицы: «Чоппа» → «Чоппа дом 2», «Российская» → «Российская 24» */
+function shopForStreet(st){
+  return SHOPS.find(s=>s.name.toLowerCase().startsWith(String(st).toLowerCase())) || null;
+}
 function calcDelivery(shop, km){
   if(!shop) return null;
   if(shop.min===0 && shop.max===0) return 0;
   const t = Math.max(0, Math.min(1, km/6));   /* 6 км — максимум */
   return Math.round(shop.min + (shop.max-shop.min)*t);
 }
+/* считаем только когда человек дописал адрес (2 сек пауза или ушёл с поля) */
+let devTimer = null;
+function onAddrInput(){
+  clearTimeout(devTimer);
+  const el = document.getElementById('dev-value');
+  if(el) el.textContent = 'дописываешь… посчитаю как закончишь';
+  devTimer = setTimeout(recalcDelivery, 2000);
+}
+function onAddrDone(){
+  clearTimeout(devTimer);
+  recalcDelivery();
+}
 async function recalcDelivery(){
   const el = document.getElementById('dev-value');
   if(orderType!=='delivery'){
-    deliveryCost=null; deliveryKm=null;
+    deliveryCost=0; deliveryKm=null; deliveryShop=null;
     if(el) el.textContent = 'бесплатно';
+    updTotals();
     return;
   }
   const addrEl = document.getElementById('f-address');
   const addr = addrEl ? addrEl.value.trim() : '';
-  if(!addr){ deliveryCost=null; deliveryKm=null; if(el) el.textContent='укажи адрес'; return; }
+  if(!addr){
+    deliveryCost=null; deliveryKm=null; deliveryShop=null;
+    if(el) el.textContent='укажи адрес';
+    updTotals();
+    return;
+  }
   if(el) el.textContent = 'считаю…';
   const p = await geocode(addr+', Челябинск');
-  if(!p){ deliveryKm=null; deliveryCost=null; if(el) el.textContent='адрес не найден — напиши полнее'; return; }
-  const ns = nearestShop(p.lat, p.lon);
-  if(!ns.shop){ if(el) el.textContent='точки не найдены'; return; }
-  deliveryKm = ns.km;
-  deliveryCost = calcDelivery(ns.shop, ns.km);
-  if(el) el.textContent = deliveryKm.toFixed(1)+' км от '+ns.shop.name+' — '+(deliveryCost?fmt(deliveryCost)+' ₽':'бесплатно');
-  renderCart();
+  if(!p){ deliveryKm=null; deliveryCost=null; deliveryShop=null; if(el) el.textContent='адрес не найден — напиши полнее'; updTotals(); return; }
+  /* точка определяется по улицам товаров в корзине */
+  const sts = streetsInCart();
+  let shops = sts.map(shopForStreet).filter(Boolean).filter(s=>s.lat!==null);
+  if(!shops.length) shops = SHOPS.filter(s=>s.lat!==null);
+  let best = null, bestKm = Infinity;
+  for(const s of shops){
+    const km = distKm(s, p);
+    if(km < bestKm){ bestKm = km; best = s; }
+  }
+  if(!best){ if(el) el.textContent='точки не найдены'; updTotals(); return; }
+  if(bestKm > 15){ deliveryKm=null; deliveryCost=null; deliveryShop=null; if(el) el.textContent='адрес не найден — напиши полнее'; updTotals(); return; }
+  deliveryKm = bestKm;
+  deliveryShop = best;
+  deliveryCost = calcDelivery(best, bestKm);
+  if(el) el.textContent = deliveryKm.toFixed(1)+' км от '+best.name+' — '+(deliveryCost?fmt(deliveryCost)+' ₽':'бесплатно');
+  updTotals();
 }
-let devTimer;
-function onAddrInput(){
-  clearTimeout(devTimer);
-  devTimer = setTimeout(recalcDelivery, 900);
+function updTotals(){
+  const dev = deliveryPrice();
+  const grand = cartTotal() + dev;
+  const dl = document.getElementById('r-del');
+  if(dl) dl.textContent = dev ? fmt(dev)+' ₽' : 'бесплатно';
+  const tt = document.getElementById('r-total');
+  if(tt) tt.textContent = fmt(grand)+' ₽';
 }
 function setOrderType(t){
   orderType = t; haptic();
-  if(t==='pickup') deliveryCost = 0;
-  else deliveryCost = null;
+  if(t==='pickup'){ deliveryCost = 0; }
+  else { deliveryCost = null; deliveryKm = null; deliveryShop = null; }
   renderCart();
 }
 function deliveryPrice(){
   if(orderType==='pickup') return 0;
   if(cartTotal() >= FREE_SHIP) return 0;
-  if(deliveryCost!==null) return deliveryCost;
-  return 0;
+  return deliveryCost!==null ? deliveryCost : 0;
 }
 function renderCart(){
   const el = document.getElementById('cart-body');
@@ -1096,7 +1108,7 @@ function renderCart(){
     if(!i) return '';
     return `<div class="crow">
       <img src="${i.img||''}" alt="">
-      <div class="m"><b>${i.name}</b><small>${fmt(i.price)} ₽ × ${cart[code]}</small></div>
+      <div class="m"><b>${i.name}</b><small>${fmt(i.price)} ₽ × ${cart[code]} · ${i.street||'—'}</small></div>
       <div class="step">
         <button onclick="changeQty('${code}',-1)">−</button>
         <b>${cart[code]}</b>
@@ -1107,9 +1119,10 @@ function renderCart(){
   const dev = deliveryPrice();
   const grand = cartTotal() + dev;
   const addrBlock = orderType==='delivery'
-    ? `<input class="f" id="f-address" placeholder="🏠 Адрес (улица, дом, квартира)" value="${load('faddress','')}" oninput="onAddrInput()">
+    ? `<input class="f" id="f-address" placeholder="🏠 Адрес (улица, дом, квартира)" value="${load('faddress','')}"
+        oninput="onAddrInput()" onblur="onAddrDone()" onkeydown="if(event.key==='Enter'){onAddrDone();this.blur()}">
        <div class="shipbar"><div class="sb-t">🚚 Доставка: <b id="dev-value">укажи адрес</b></div>
-       <div style="font-size:11px;color:var(--muted);margin-top:6px">Цена считается от ближайшей точки: Российская 24 — бесплатно, Чоппа дом 2 — 10–100 ₽</div></div>`
+       <div style="font-size:11px;color:var(--muted);margin-top:6px">Считается от точки, где лежит товар: Российская 24 — бесплатно, Чоппа дом 2 — 10–100 ₽</div></div>`
     : `<div class="rv-title">🏠 Точка самовывоза</div>
        <div class="streets" style="padding:0 0 8px">
         ${SHOPS.map(s=>`<div class="scard ${pickupShop===s.name?'on':''}" onclick="pickupShop='${s.name}';haptic();renderCart()"><span class="ic">🏠</span><b>${s.name}</b><small>самовывоз — бесплатно</small></div>`).join('')}
@@ -1128,16 +1141,13 @@ function renderCart(){
     <div class="sumbox">
       <div class="r"><span>Позиций:</span><b>${codes.reduce((a,c)=>a+cart[c],0)}</b></div>
       <div class="r"><span>Товары:</span><b>${fmt(cartTotal())} ₽</b></div>
-      <div class="r"><span>${orderType==='pickup'?'Самовывоз':'Доставка'}:</span><b>${dev?fmt(dev)+' ₽':'бесплатно'}</b></div>
-      <div class="r total"><span>Итого:</span><b>${fmt(grand)} ₽</b></div>
+      <div class="r"><span>${orderType==='pickup'?'Самовывоз':'Доставка'}:</span><b id="r-del">${dev?fmt(dev)+' ₽':'бесплатно'}</b></div>
+      <div class="r total"><span>Итого:</span><b id="r-total">${fmt(grand)} ₽</b></div>
       <button class="cta" onclick="submitOrder()">Оформить заказ</button>
       <button class="clear-btn" onclick="clearCart()">Очистить корзину</button>
     </div>`;
   observeNew(el);
-  if(orderType==='delivery' && load('faddress','')){
-    deliveryCost = null;
-    recalcDelivery();
-  }
+  if(orderType==='delivery' && load('faddress','')) recalcDelivery();
 }
 
 /* ============ ЗАКАЗ ============ */
@@ -1155,11 +1165,10 @@ function submitOrder(){
   save('fname',name); save('fphone',phone); save('faddress',address); save('flavor',flavor);
   const items = Object.keys(cart).map(code=>{
     const i = ITEMS.find(x=>x.code===code);
-    return { code, name:i.name, price:i.price, qty:cart[code] };
+    return { code, name:i.name, price:i.price, qty:cart[code], street:i.street||'—' };
   });
   const total = items.reduce((a,x)=>a+x.price*x.qty,0);
   const delivery = deliveryPrice();
-  const nearestForDev = deliveryKm!==null ? nearestShopFromLastKm : null;
   orders.unshift({ date:new Date().toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}),
     count:items.reduce((a,x)=>a+x.qty,0), total });
   orders = orders.slice(0,20);
@@ -1168,11 +1177,11 @@ function submitOrder(){
   const payload = { type:'order', name, phone, items, total, delivery,
                     address: isPickup ? ('Самовывоз: '+pickupShop) : address,
                     order: isPickup?('самовывоз · '+pickupShop):'доставка',
+                    shop: deliveryShop ? deliveryShop.name : null,
                     km: isPickup ? null : deliveryKm };
   if(flavor) payload.flavor = flavor;
   tg.sendData(JSON.stringify(payload));
 }
-let nearestShopFromLastKm = null; /* имя ближайшей точки последнего расчёта доставки */
 function renderOrders(){
   const box = document.getElementById('orders-box');
   if(!orders.length){
@@ -1242,4 +1251,5 @@ renderBadge();
 </script>
 </body>
 </html>
+
 
