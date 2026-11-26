@@ -577,7 +577,7 @@ nav .npill{position:absolute;top:5px;right:calc(50% - 24px);
 
 <nav>
   <div class="on" id="n-cat" onclick="go('cat')"><span class="ic">🏠</span>Каталог</div>
-  <div id="n-cart" onclick="go('cart')"><span class="ic">🛒</span>Корзina<span class="npill" id="nav-badge" style="display:none">0</span></div>
+  <div id="n-cart" onclick="go('cart')"><span class="ic">🛒</span>Корзина<span class="npill" id="nav-badge" style="display:none">0</span></div>
   <div id="n-info" onclick="go('info')"><span class="ic">ℹ️</span>Инфо</div>
 </nav>
 
@@ -1028,6 +1028,31 @@ function calcDelivery(shop, km){
   const t = Math.max(0, Math.min(1, km/6));   /* 6 км — максимум */
   return Math.round(shop.min + (shop.max-shop.min)*t);
 }
+/* точки, доступные для самовывоза: те, где лежат товары в корзине */
+function pickupShopsAvailable(){
+  const sts = streetsInCart();
+  const names = new Set();
+  sts.forEach(st=>{ const s = shopForStreet(st); if(s) names.add(s.name); });
+  return SHOPS.filter(s=>names.has(s.name));
+}
+function pickupBlock(){
+  const avail = pickupShopsAvailable();
+  /* если товар есть только на одной точке — выбираем её автоматически */
+  if(avail.length===1 && pickupShop!==avail[0].name) pickupShop = avail[0].name;
+  return `<div class="rv-title">🏠 Точка самовывоза</div>
+    <div class="streets" style="padding:0 0 8px">
+      ${SHOPS.map(s=>{
+        const ok = avail.some(a=>a.name===s.name);
+        const lock = ok ? '' : 'style="opacity:.35;pointer-events:none"';
+        return `<div class="scard ${pickupShop===s.name?'on':''}" ${lock}
+          onclick="${ok?`pickupShop='${s.name}';haptic();renderCart()`:''}">
+          <span class="ic">${ok?'🏠':'🚫'}</span>
+          <b>${s.name}</b>
+          <small>${ok?'самовывоз — бесплатно':'этой позиции нет на точке'}</small>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
 /* считаем только когда человек дописал адрес (2 сек пауза или ушёл с поля) */
 let devTimer = null;
 function onAddrInput(){
@@ -1123,10 +1148,7 @@ function renderCart(){
         oninput="onAddrInput()" onblur="onAddrDone()" onkeydown="if(event.key==='Enter'){onAddrDone();this.blur()}">
        <div class="shipbar"><div class="sb-t">🚚 Доставка: <b id="dev-value">укажи адрес</b></div>
        <div style="font-size:11px;color:var(--muted);margin-top:6px">Считается от точки, где лежит товар: Российская 24 — бесплатно, Чоппа дом 2 — 10–100 ₽</div></div>`
-    : `<div class="rv-title">🏠 Точка самовывоза</div>
-       <div class="streets" style="padding:0 0 8px">
-        ${SHOPS.map(s=>`<div class="scard ${pickupShop===s.name?'on':''}" onclick="pickupShop='${s.name}';haptic();renderCart()"><span class="ic">🏠</span><b>${s.name}</b><small>самовывоз — бесплатно</small></div>`).join('')}
-       </div>`;
+    : pickupBlock();
   el.innerHTML = shipBarHTML() + rows +
     `<h2 class="sec">Получение</h2>
     <div style="display:flex;gap:9px;margin-bottom:13px">
