@@ -1,0 +1,131 @@
+{
+ "spins_per_juice": 1,
+ "prizes": [
+  {
+   "id": "free_delivery",
+   "title": "🚚 Бесплатная доставка",
+   "weight": 26,
+   "color": "#22d3ee"
+  },
+  {
+   "id": "discount3",
+   "title": "🎟 Скидка 3% (промокод)",
+   "weight": 5,
+   "color": "#7dd3fc"
+  },
+  {
+   "id": "discount5",
+   "title": "🎟 Скидка 5% (промокод)",
+   "weight": 11,
+   "color": "#38bdf8"
+  },
+  {
+   "id": "discount10",
+   "title": "🎟 Скидка 10% (промокод)",
+   "weight": 7,
+   "color": "#a855f7"
+  },
+  {
+   "id": "discount15",
+   "title": "🎟 Скидка 15% (промокод)",
+   "weight": 3,
+   "color": "#d946ef"
+  },
+  {
+   "id": "spin1",
+   "title": "🎯 +1 прокрутка",
+   "weight": 8,
+   "color": "#34d399"
+  },
+  {
+   "id": "spin2",
+   "title": "🎯 +2 прокрутки",
+   "weight": 4,
+   "color": "#10b981"
+  },
+  {
+   "id": "spin3",
+   "title": "🎯 +3 прокрутки",
+   "weight": 1.5,
+   "color": "#059669"
+  },
+  {
+   "id": "spin5",
+   "title": "🎯 +5 прокруток",
+   "weight": 0.9,
+   "color": "#047857"
+  },
+  {
+   "id": "gift_pod",
+   "title": "🎁 Жижа в подарок с подиком",
+   "weight": 5.5,
+   "color": "#f472b6"
+  },
+  {
+   "id": "juice_second50",
+   "title": "💧 2-я жижа −50%",
+   "weight": 5,
+   "color": "#c084fc"
+  },
+  {
+   "id": "juice_third3",
+   "title": "💧 3-я жижа бесплатно",
+   "weight": 1,
+   "color": "#e879f9"
+  },
+  {
+   "id": "delivery_half",
+   "title": "🚚 Доставка −50%",
+   "weight": 3,
+   "color": "#67e8f9"
+  },
+  {
+   "id": "pod_disc20",
+   "title": "💨 −20% на подики (промокод)",
+   "weight": 4,
+   "color": "#fb923c"
+  },
+  {
+   "id": "candy",
+   "title": "🍬 Конфета в подарок",
+   "weight": 3,
+   "color": "#fbbf24"
+  },
+  {
+   "id": "sticker",
+   "title": "✨ Стикер-мерч",
+   "weight": 2,
+   "color": "#facc15"
+  },
+  {
+   "id": "mystery",
+   "title": "❓ Сюрприз от менеджера",
+   "weight": 1.5,
+   "color": "#94a3b8"
+  },
+  {
+   "id": "energy_gift",
+   "title": "⚡ Энергетик в подарок",
+   "weight": 1.5,
+   "color": "#fde047"
+  },
+  {
+   "id": "tea_gift",
+   "title": "🍵 Напиток в подарок",
+   "weight": 1,
+   "color": "#86efac"
+  },
+  {
+   "id": "try_again",
+   "title": "💨 Мимо",
+   "weight": 6.1,
+   "color": "#4b5563"
+  },
+  {
+   "id": "free_juice",
+   "title": "🎰 БЕСПЛАТНАЯ ЖИЖА",
+   "weight": 0.0001,
+   "color": "#ffd166"
+  }
+ ]
+}
