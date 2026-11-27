@@ -15,8 +15,8 @@ from aiogram.types import (ReplyKeyboardMarkup, KeyboardButton,
                            InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo)
 
 # --- Настройки из переменных окружения (задаются в панели хостинга) ---
-TOKEN = os.getenv("8255807543", "")
-GITHUB_TOKEN = "ghp_xgFT9E8..."
+TOKEN = os.getenv("BOT_TOKEN", "")
+GITHUB_TOKEN = os.getenv("GITHUB_TOKEN", "")
 GITHUB_REPO = "fgfhg55/-Libirny-Shop-"
 PAGES_BASE = "https://fgfhg55.github.io/-Libirny-Shop-"
 WEB_APP_URL = PAGES_BASE + "/"
