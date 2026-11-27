@@ -69,5 +69,30 @@
    }
   ],
   "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795692373407.jpg"
+ },
+ {
+  "code": "p1795746157546",
+  "name": "злая лабубу",
+  "price": 450,
+  "cat": "💧 Жижки",
+  "street": "Улица Чопа",
+  "streets": [
+   "Улица Чопа"
+  ],
+  "flavors": [
+   {
+    "name": "тараканы",
+    "stock": {
+     "Улица Чопа": 2
+    }
+   },
+   {
+    "name": "мухи",
+    "stock": {
+     "Улица Чопа": 2
+    }
+   }
+  ],
+  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795746157546.jpg"
  }
 ]
