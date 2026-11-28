@@ -168,5 +168,24 @@
    }
   ],
   "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795839462757.jpg"
+ },
+ {
+  "code": "p1795839804348",
+  "name": "хрос 5 мини",
+  "price": 1200,
+  "cat": "💨 Подики",
+  "street": "Улица Чопа",
+  "streets": [
+   "Улица Чопа"
+  ],
+  "flavors": [
+   {
+    "name": "фиолетовый",
+    "stock": {
+     "Улица Чопа": 1
+    }
+   }
+  ],
+  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795839804348.jpg"
  }
 ]
