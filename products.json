@@ -225,5 +225,24 @@
    }
   ],
   "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795840104837.jpg"
+ },
+ {
+  "code": "p1795840202645",
+  "name": "💀 САМОУБИЙЦА 💀\n\n🔥Жидкость ISTERIKA х САМОУБИЙЦА 80mg",
+  "price": 600,
+  "cat": "💧 Жижки",
+  "street": "Российская",
+  "streets": [
+   "Российская"
+  ],
+  "flavors": [
+   {
+    "name": "▫️Клубника киви мята\n▫️Вишневая жвачка \n▫️Ментос смородина",
+    "stock": {
+     "Российская": 1
+    }
+   }
+  ],
+  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795840202645.jpg"
  }
 ]
