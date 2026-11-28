@@ -485,5 +485,24 @@
    }
   ],
   "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795841932121.jpg"
+ },
+ {
+  "code": "p1795844048608",
+  "name": "НИКОБУСТЕРЫ 4%",
+  "price": 125,
+  "cat": "💧 Жижки",
+  "street": "Российская",
+  "streets": [
+   "Российская"
+  ],
+  "flavors": [
+   {
+    "name": "Никобустер 4%",
+    "stock": {
+     "Российская": 5
+    }
+   }
+  ],
+  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795844048608.jpg"
  }
 ]
