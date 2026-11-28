@@ -100,5 +100,30 @@
    }
   ],
   "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795839102648.jpg"
+ },
+ {
+  "code": "p1795839159032",
+  "name": "рик и морти на замерзоне кислые",
+  "price": 450,
+  "cat": "💧 Жижки",
+  "street": "Улица Чопа",
+  "streets": [
+   "Улица Чопа"
+  ],
+  "flavors": [
+   {
+    "name": "малиновая шипучка",
+    "stock": {
+     "Улица Чопа": 2
+    }
+   },
+   {
+    "name": "мантидью",
+    "stock": {
+     "Улица Чопа": 2
+    }
+   }
+  ],
+  "img": "https://fgfhg55.github.io/-Libirny-Shop-/images/p1795839159032.jpg"
  }
 ]
